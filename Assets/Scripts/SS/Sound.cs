@@ -187,26 +187,16 @@ public class Sound {
 
     /// SEの再生
     /// ※事前にLoadSeでロードしておくこと
-    public static bool StopSe(string key, int channel = -1)
+    public static bool StopSe(int channel = -1)
     {
-        return GetInstance()._StopSe(key, channel);
+        return GetInstance()._StopSe(channel);
     }
-    bool _StopSe(string key, int channel = -1)
+    bool _StopSe(int channel = -1)
     {
-        if (_poolSe.ContainsKey(key) == false)
-        {
-            // 対応するキーがない
-            return false;
-        }
-
-        // リソースの取得
-        var _data = _poolSe[key];
-
         if (0 <= channel && channel < SE_CHANNEL)
         {
             // チャンネル指定
             var source = _GetAudioSource(eType.Se, channel);
-            source.clip = _data.Clip;
             source.Stop();
         }
         else

@@ -65,10 +65,7 @@ class SubMain
             bonusSound.StopBgm();
         }
 
-        foreach (var item in payoutSoundList)
-        {
-            Sound.StopSe(item);
-        }
+        Sound.StopSe(0);
 
         switch (betnum)
         {
@@ -100,17 +97,17 @@ class SubMain
     {
         if (smLot.lotA4() == SMLot.A4_Result.Hit)
         {
-            Sound.PlaySe("ウーハー", 0.4f);
+            Sound.PlaySe("ウーハー", 0.4f, 0);
         }
         else
         {
-            Sound.PlaySe("WAIT", 0.1f);
+            Sound.PlaySe("WAIT", 0.1f, 0);
         }
     }
 
     public void ReelStart()
     {
-        Sound.StopSe("WAIT");
+        Sound.StopSe(0);
 
         // 予告音抽せん
         switch (smLot.lotA1())
@@ -374,7 +371,7 @@ class SubMain
                     bonusSound.PlayBgm(BonusSound.BonusSoundType.BB2_JacGame);
                     break;
                 default: 
-                    Sound.PlaySe(item, 0.2f);
+                    Sound.PlaySe(item, 0.2f, 0);
                     break;
             }
         }
@@ -496,10 +493,10 @@ class SubMain
                     case SMLot.A5_Result.S1:
                     case SMLot.A5_Result.S12:
                     case SMLot.A5_Result.S123:
-                        Sound.PlaySe("EV_STOP_1", 0.2f);
+                        Sound.PlaySe("EV_STOP_1", 0.2f, 0);
                         break;
                     default:
-                        Sound.PlaySe("STOP", 0.2f);
+                        Sound.PlaySe("STOP", 0.2f, 0);
                         break;
                 }
                 break;
@@ -508,10 +505,10 @@ class SubMain
                 {
                     case SMLot.A5_Result.S12:
                     case SMLot.A5_Result.S123:
-                        Sound.PlaySe("EV_STOP_2", 0.2f);
+                        Sound.PlaySe("EV_STOP_2", 0.2f, 0);
                         break;
                     default:
-                        Sound.PlaySe("STOP", 0.2f);
+                        Sound.PlaySe("STOP", 0.2f, 0);
                         break;
                 }
 
@@ -526,13 +523,13 @@ class SubMain
                                 case SMLot.A2_Result.None:
                                     break;
                                 case SMLot.A2_Result.A:
-                                    Sound.PlaySe("REACH_A", 0.2f);
+                                    Sound.PlaySe("REACH_A", 0.2f, 1);
                                     break;
                                 case SMLot.A2_Result.B:
-                                    Sound.PlaySe("REACH_B", 0.2f);
+                                    Sound.PlaySe("REACH_B", 0.2f, 1);
                                     break;
                                 case SMLot.A2_Result.C:
-                                    Sound.PlaySe("REACH_C", 0.2f);
+                                    Sound.PlaySe("REACH_C", 0.2f, 1);
                                     break;
                                 default:
                                     break;
@@ -540,7 +537,7 @@ class SubMain
                         }
                         else if (data.IsReach(new int[] { 0 }) || data.IsReach(new int[] { 2 }))
                         {
-                            Sound.PlaySe("REACH_A", 0.2f);
+                            Sound.PlaySe("REACH_A", 0.2f, 1);
                         }
                         break;
                     case AutoMakeCode.Enum.Status.SBIGStandby:
@@ -552,13 +549,13 @@ class SubMain
                                 case SMLot.A2_Result.None:
                                     break;
                                 case SMLot.A2_Result.A:
-                                    Sound.PlaySe("REACH_A", 0.2f);
+                                    Sound.PlaySe("REACH_A", 0.2f, 1);
                                     break;
                                 case SMLot.A2_Result.B:
-                                    Sound.PlaySe("REACH_B", 0.2f);
+                                    Sound.PlaySe("REACH_B", 0.2f, 1);
                                     break;
                                 case SMLot.A2_Result.C:
-                                    Sound.PlaySe("REACH_C", 0.2f);
+                                    Sound.PlaySe("REACH_C", 0.2f, 1);
                                     break;
                                 default:
                                     break;
@@ -566,7 +563,7 @@ class SubMain
                         }
                         else if (data.IsReach(new int[] { 1, 8 }) || data.IsReach(new int[] { 2 }))
                         {
-                            Sound.PlaySe("REACH_A", 0.2f);
+                            Sound.PlaySe("REACH_A", 0.2f, 1);
                         }
                         break;
                     case AutoMakeCode.Enum.Status.RBStandby:
@@ -578,13 +575,13 @@ class SubMain
                                 case SMLot.A2_Result.None:
                                     break;
                                 case SMLot.A2_Result.A:
-                                    Sound.PlaySe("REACH_A", 0.2f);
+                                    Sound.PlaySe("REACH_A", 0.2f, 1);
                                     break;
                                 case SMLot.A2_Result.B:
-                                    Sound.PlaySe("REACH_B", 0.2f);
+                                    Sound.PlaySe("REACH_B", 0.2f, 1);
                                     break;
                                 case SMLot.A2_Result.C:
-                                    Sound.PlaySe("REACH_C", 0.2f);
+                                    Sound.PlaySe("REACH_C", 0.2f, 1);
                                     break;
                                 default:
                                     break;
@@ -592,7 +589,7 @@ class SubMain
                         }
                         else if (data.IsReach(new int[] { 1, 8 }) || data.IsReach(new int[] { 0 }))
                         {
-                            Sound.PlaySe("REACH_A", 0.2f);
+                            Sound.PlaySe("REACH_A", 0.2f, 1);
                         }
                         break;
                     case AutoMakeCode.Enum.Status.Nml:
@@ -604,14 +601,15 @@ class SubMain
                 break;
 
             case 3:
+                Sound.StopSe(0);
                 switch (smLot.a5_Result)
                 {
                     case SMLot.A5_Result.S123:
                         subSub.LogoColor(Color.gray);
-                        Sound.PlaySe("EV_STOP_3", 0.2f);
+                        Sound.PlaySe("EV_STOP_3", 0.2f, 0);
                         break;
                     default:
-                        Sound.PlaySe("STOP", 0.2f);
+                        Sound.PlaySe("STOP", 0.2f, 0);
                         break;
                 }
                 break;
@@ -639,19 +637,19 @@ class SubMain
             switch (bonustype)
             {
                 case BonusType.BB1:
-                    Sound.StopSe("BELL");
+                    Sound.StopSe(0);
                     bonusSound.PlayBgm(BonusSound.BonusSoundType.BB1_Ending);
                     break;
                 case BonusType.BB2:
-                    Sound.StopSe("BELL");
+                    Sound.StopSe(0);
                     bonusSound.PlayBgm(BonusSound.BonusSoundType.BB2_Ending);
                     break;
                 case BonusType.BB3:
-                    Sound.StopSe("BELL");
+                    Sound.StopSe(0);
                     bonusSound.PlayBgm(BonusSound.BonusSoundType.BB3_Ending);
                     break;
                 case BonusType.BB4:
-                    Sound.StopSe("BELL");
+                    Sound.StopSe(0);
                     bonusSound.PlayBgm(BonusSound.BonusSoundType.BB4_Ending);
                     break;
                 default:
