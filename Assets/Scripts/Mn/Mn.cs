@@ -306,7 +306,7 @@ public class Mn : MonoBehaviour
         new CmbRecode()
         {
             name = "1枚役C",
-            zugara = new int[]{ 7,2,9 },
+            zugara = new int[]{ 7,9,9 },
             bnsMedal = 0,
             pay = new int[]{ 1, 1 },
             replay = false,
@@ -526,6 +526,19 @@ public class Mn : MonoBehaviour
                             // デバッグ用
                             _frtCode = frtCode;
                             _bnsCode = bnsCode;
+
+                            // 強制フラグ
+                            if (Input.GetKey(KeyCode.Alpha1)) bnsCode = AutoMakeCode.Enum.BnsCode.RB;
+                            if (Input.GetKey(KeyCode.Alpha2)) bnsCode = AutoMakeCode.Enum.BnsCode.SBIG;
+                            if (Input.GetKey(KeyCode.Alpha3)) bnsCode = AutoMakeCode.Enum.BnsCode.ABIG;
+
+                            // 一枚役
+                            if(bnsCode != AutoMakeCode.Enum.BnsCode.Hazure)
+                            {
+                                if (Input.GetKey(KeyCode.A)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiA;
+                                if (Input.GetKey(KeyCode.B)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiB;
+                                if (Input.GetKey(KeyCode.C)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiC;
+                            }
 
                             break;
                         case DebugType.DebugLot:
@@ -969,6 +982,23 @@ public class Mn : MonoBehaviour
                     _WaitCount = 0;
                     WaitCount = 0;
                     Debug.Log("ウェイトOFF");
+                }
+            }
+        }
+
+        if (gameState == GameState.GameWait)
+        {
+            // ボーナスショートカット
+            if((mnStatus == AutoMakeCode.Enum.Status.ABIG) || (mnStatus == AutoMakeCode.Enum.Status.SBIG) || (mnStatus == AutoMakeCode.Enum.Status.RB))
+            {
+                if ((Input.GetKey(KeyCode.B) == true) && (Input.GetKey(KeyCode.C) == true))
+                {
+                    if(bonusSeg.getNum() > 1)
+                    {
+                        Debug.Log("ボーナスショートカット");
+                        bnsMedal = 1;
+                        bonusSeg.setNum(1, "D3", false);
+                    }
                 }
             }
         }
