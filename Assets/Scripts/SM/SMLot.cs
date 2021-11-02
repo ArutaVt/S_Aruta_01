@@ -12,12 +12,14 @@ public class SMLot
         Yokoku_A,
         Yokoku_B,
         Yokoku_C,
+        Late,
     }
+    public A1_Result a1_Result;
 
     public enum A2_Result{ None, A, B, C }
     public enum A3_Result{ None, A, B, C }
     public enum A4_Result{ None, Hit }
-    public enum A5_Result{ None, S1, S12, S123 }
+    public enum A5_Result{ None, S1, S12, S123, S123_On, S123_Off }
     public A5_Result a5_Result;
     public enum A6_Result
     {
@@ -74,6 +76,7 @@ public class SMLot
         else table_Y_Index = 0;
         A1_Result result = (A1_Result)lot(1, table_X_Index, table_Y_Index, box_X_Index);
         Debug.Log(_lotname + ":" + result);
+        a1_Result = result;
         return result;
     }
 
@@ -115,11 +118,9 @@ public class SMLot
 
     public A5_Result lotA5()
     {
-        int table_X_Index = (int)Mn.bnsCode;
-        int table_Y_Index = 0;
+        int table_X_Index = (int)a1_Result;
+        int table_Y_Index = (int)Mn.bnsCode;
         int box_X_Index = (int)Mn.frtCode;
-        if (Mn.hitBnsGameFlg == true) table_Y_Index = 1;
-        else table_Y_Index = 0;
         A5_Result result = (A5_Result)lot(5, table_X_Index, table_Y_Index, box_X_Index);
         Debug.Log(_lotname + ":" + result);
         a5_Result = result;

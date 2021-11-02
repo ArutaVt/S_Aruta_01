@@ -109,7 +109,7 @@ class SubMain
     {
         Sound.StopSe(0);
 
-        // 予告音抽せん
+        // 予告音抽せん        
         switch (smLot.lotA1())
         {
             case SMLot.A1_Result.None:
@@ -169,6 +169,9 @@ class SubMain
             case SMLot.A1_Result.Yokoku_C:
                 subSub.LogoFlash(Color.white);
                 Sound.PlaySe("YOKOKU_C", 0.2f);
+                break;
+            case SMLot.A1_Result.Late:
+                Sound.PlaySe("遅れ", 0.2f);
                 break;
             default:
                 Sound.PlaySe("REELSTART", 0.2f);
@@ -237,6 +240,8 @@ class SubMain
     private bool jacGameFlg = false;
     public void PayOut(List<Mn.CmbRecode> list, int betnum, AutoMakeCode.Enum.Status state)
     {
+        if(smLot.a5_Result == SMLot.A5_Result.S123_Off) subSub.LogoColor(Color.gray);
+
         List<string> paysound = new List<string>();
         foreach (Mn.CmbRecode item in list)
         {
@@ -270,11 +275,6 @@ class SubMain
                     {
                         if (paysound.Exists(x => x == "BNS_SUIKA_DAITAI") == false) paysound.Add("BNS_SUIKA_DAITAI");
                     }
-                    else
-                    {
-                        if (paysound.Exists(x => x == "SUIKA") == false) paysound.Add("SUIKA");
-                    }
-
                     break;
                 case "ベル":
                 case "ベル代替":
@@ -493,6 +493,8 @@ class SubMain
                     case SMLot.A5_Result.S1:
                     case SMLot.A5_Result.S12:
                     case SMLot.A5_Result.S123:
+                    case SMLot.A5_Result.S123_On:
+                    case SMLot.A5_Result.S123_Off:
                         Sound.PlaySe("EV_STOP_1", 0.2f, 0);
                         break;
                     default:
@@ -505,6 +507,8 @@ class SubMain
                 {
                     case SMLot.A5_Result.S12:
                     case SMLot.A5_Result.S123:
+                    case SMLot.A5_Result.S123_On:
+                    case SMLot.A5_Result.S123_Off:
                         Sound.PlaySe("EV_STOP_2", 0.2f, 0);
                         break;
                     default:
@@ -518,21 +522,24 @@ class SubMain
                         if (data.IsReach(new int[] { 1, 8 }))
                         {
                             // 特殊聴牌音抽せん
-                            switch (smLot.lotA2())
+                            if(Mn.frtCode == AutoMakeCode.Enum.FrtCode.Hazure)
                             {
-                                case SMLot.A2_Result.None:
-                                    break;
-                                case SMLot.A2_Result.A:
-                                    Sound.PlaySe("REACH_A", 0.2f, 1);
-                                    break;
-                                case SMLot.A2_Result.B:
-                                    Sound.PlaySe("REACH_B", 0.2f, 1);
-                                    break;
-                                case SMLot.A2_Result.C:
-                                    Sound.PlaySe("REACH_C", 0.2f, 1);
-                                    break;
-                                default:
-                                    break;
+                                switch (smLot.lotA2())
+                                {
+                                    case SMLot.A2_Result.None:
+                                        break;
+                                    case SMLot.A2_Result.A:
+                                        Sound.PlaySe("REACH_A", 0.2f, 1);
+                                        break;
+                                    case SMLot.A2_Result.B:
+                                        Sound.PlaySe("REACH_B", 0.2f, 1);
+                                        break;
+                                    case SMLot.A2_Result.C:
+                                        Sound.PlaySe("REACH_C", 0.2f, 1);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         }
                         else if (data.IsReach(new int[] { 0 }) || data.IsReach(new int[] { 2 }))
@@ -544,21 +551,24 @@ class SubMain
                         if (data.IsReach(new int[] { 0 }))
                         {
                             // 特殊聴牌音抽せん
-                            switch (smLot.lotA2())
+                            if (Mn.frtCode == AutoMakeCode.Enum.FrtCode.Hazure)
                             {
-                                case SMLot.A2_Result.None:
-                                    break;
-                                case SMLot.A2_Result.A:
-                                    Sound.PlaySe("REACH_A", 0.2f, 1);
-                                    break;
-                                case SMLot.A2_Result.B:
-                                    Sound.PlaySe("REACH_B", 0.2f, 1);
-                                    break;
-                                case SMLot.A2_Result.C:
-                                    Sound.PlaySe("REACH_C", 0.2f, 1);
-                                    break;
-                                default:
-                                    break;
+                                switch (smLot.lotA2())
+                                {
+                                    case SMLot.A2_Result.None:
+                                        break;
+                                    case SMLot.A2_Result.A:
+                                        Sound.PlaySe("REACH_A", 0.2f, 1);
+                                        break;
+                                    case SMLot.A2_Result.B:
+                                        Sound.PlaySe("REACH_B", 0.2f, 1);
+                                        break;
+                                    case SMLot.A2_Result.C:
+                                        Sound.PlaySe("REACH_C", 0.2f, 1);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         }
                         else if (data.IsReach(new int[] { 1, 8 }) || data.IsReach(new int[] { 2 }))
@@ -570,21 +580,24 @@ class SubMain
                         if (data.IsReach(new int[] { 2 }))
                         {
                             // 特殊聴牌音抽せん
-                            switch (smLot.lotA2())
+                            if (Mn.frtCode == AutoMakeCode.Enum.FrtCode.Hazure)
                             {
-                                case SMLot.A2_Result.None:
-                                    break;
-                                case SMLot.A2_Result.A:
-                                    Sound.PlaySe("REACH_A", 0.2f, 1);
-                                    break;
-                                case SMLot.A2_Result.B:
-                                    Sound.PlaySe("REACH_B", 0.2f, 1);
-                                    break;
-                                case SMLot.A2_Result.C:
-                                    Sound.PlaySe("REACH_C", 0.2f, 1);
-                                    break;
-                                default:
-                                    break;
+                                switch (smLot.lotA2())
+                                {
+                                    case SMLot.A2_Result.None:
+                                        break;
+                                    case SMLot.A2_Result.A:
+                                        Sound.PlaySe("REACH_A", 0.2f, 1);
+                                        break;
+                                    case SMLot.A2_Result.B:
+                                        Sound.PlaySe("REACH_B", 0.2f, 1);
+                                        break;
+                                    case SMLot.A2_Result.C:
+                                        Sound.PlaySe("REACH_C", 0.2f, 1);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         }
                         else if (data.IsReach(new int[] { 1, 8 }) || data.IsReach(new int[] { 0 }))
@@ -604,8 +617,12 @@ class SubMain
                 Sound.StopSe(0);
                 switch (smLot.a5_Result)
                 {
-                    case SMLot.A5_Result.S123:
+                    case SMLot.A5_Result.S123_On:
                         subSub.LogoColor(Color.gray);
+                        Sound.PlaySe("EV_STOP_3", 0.2f, 0);
+                        break;
+                    case SMLot.A5_Result.S123:
+                    case SMLot.A5_Result.S123_Off:
                         Sound.PlaySe("EV_STOP_3", 0.2f, 0);
                         break;
                     default:

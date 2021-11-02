@@ -35,6 +35,7 @@ public class SubSub : MonoBehaviour
         Sound.LoadSe("EV_STOP_2", "21_演出音2");
         Sound.LoadSe("EV_STOP_3", "22_演出音3");
         Sound.LoadSe("ウーハー", "25_ウーハー風単体");
+        Sound.LoadSe("遅れ", "遅れ_レバオン");
     }
 
     /// <summary>
