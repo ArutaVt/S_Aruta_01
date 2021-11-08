@@ -391,7 +391,7 @@ class SubMain
                 if ((bonustype == BonusType.BB3) || (bonustype == BonusType.BB4)) return;
 
                 bonusGameCnt++;
-                if (bonusGameCnt % 5 == 0)
+                if ((bonusGameCnt % 5 == 0) && (bonusGameCnt <= 15))
                 {
                     float phase = (float)bonusGameCnt;
                     phase /= 5;
