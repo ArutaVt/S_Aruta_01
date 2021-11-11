@@ -48,6 +48,16 @@ public class Logo : MonoBehaviour
         }
     }
 
+    public void lampOn()
+    {
+        status = Status.ON;
+    }
+
+    public void lampOff()
+    {
+        status = Status.OFF;
+    }
+
     public void flashStart(Color color)
     {
         // フラッシュ状態移行時の初期設定

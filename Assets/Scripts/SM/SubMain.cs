@@ -28,9 +28,10 @@ class SubMain
     private int bonusMarginGame = 0;
     private bool bonusSoundChangeFlg = false;
     private BonusSound bonusSound;
+    private int naibuCnt = 0;
 
-    private BonusType bonustype = BonusType.BB1;
-    enum BonusType
+    public BonusType bonustype = BonusType.BB1;
+    public enum BonusType
     { 
         BB1,
         BB2,
@@ -223,14 +224,22 @@ class SubMain
     public void BonusStart(AutoMakeCode.Enum.BnsCode bns)
     {
         bonusGameCnt = 0;
-        switch (bns)
+
+        if(naibuCnt < 3)
         {
-            case AutoMakeCode.Enum.BnsCode.ABIG:
-                break;
-            case AutoMakeCode.Enum.BnsCode.SBIG:
-                break;
-            case AutoMakeCode.Enum.BnsCode.RB:
-                break;
+            // 告知ランプ点灯
+            switch (Mn.bnsCode)
+            {
+                case AutoMakeCode.Enum.BnsCode.ABIG:
+                    subSub.BonusLampOn(SubSub.BonusLamp.A);
+                    break;
+                case AutoMakeCode.Enum.BnsCode.SBIG:
+                    subSub.BonusLampOn(SubSub.BonusLamp.Seven);
+                    break;
+                case AutoMakeCode.Enum.BnsCode.RB:
+                    subSub.BonusLampOn(SubSub.BonusLamp.Bar);
+                    break;
+            }
         }
     }
 
@@ -643,7 +652,11 @@ class SubMain
         // ボーナス終了後にBGM変更用のフラグをONにする（100G経過でOFF）
         bonusSoundChangeFlg = true;
 
+        // ボーナス間
         bonusMarginGame = 0;
+
+        // 内部中のハズレカウント用
+        naibuCnt = 0;
     }
     
     public void GameEnd()
@@ -673,6 +686,9 @@ class SubMain
                     bonusSound.StopBgm();
                     break;
             }
+
+            // 告知ランプ消灯
+            subSub.BonusLampAllOff();
         }
 
         // (5G)経過した時にBGM変更フラグがONの場合はOFFにする
@@ -680,6 +696,31 @@ class SubMain
         {
             bonusSoundChangeFlg = false;
         }
+
+        // 内部中のハズレをカウントしてボーナス告知をする
+        if((Mn.bnsCode != AutoMakeCode.Enum.BnsCode.Hazure) && (Mn.frtCode == AutoMakeCode.Enum.FrtCode.Hazure))
+        {
+            naibuCnt++;
+            if(naibuCnt == 3)
+            {
+                Sound.PlaySe("BONUS_LAMP", 0.2f);
+
+                // 告知ランプ点灯
+                switch (Mn.bnsCode)
+                {
+                    case AutoMakeCode.Enum.BnsCode.ABIG:
+                        subSub.BonusLampOn(SubSub.BonusLamp.A);
+                        break;
+                    case AutoMakeCode.Enum.BnsCode.SBIG:
+                        subSub.BonusLampOn(SubSub.BonusLamp.Seven);
+                        break;
+                    case AutoMakeCode.Enum.BnsCode.RB:
+                        subSub.BonusLampOn(SubSub.BonusLamp.Bar);
+                        break;
+                }
+            }
+        }
+
     }
 
     /// <summary>

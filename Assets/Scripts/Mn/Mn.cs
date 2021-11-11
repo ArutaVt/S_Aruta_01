@@ -334,6 +334,8 @@ public class Mn : MonoBehaviour
     private BetType betType;
     private SubMain subMain;
     private System.Random rand = new System.Random();
+    public int bonusStartCount = 180;
+    private int _bonusStartCount = 0;
 
     // 制御データ格納用
     public List<StopRecode> stopRecodes;
@@ -464,6 +466,7 @@ public class Mn : MonoBehaviour
     private void FixedUpdate()
     {
         if (_WaitCount > 0) _WaitCount--;
+        if (_bonusStartCount > 0) _bonusStartCount--;
     }
 
     // Update is called once per frame
@@ -855,6 +858,7 @@ public class Mn : MonoBehaviour
                     switch (item.name)
                     {
                         case "7BIG":
+                            _bonusStartCount = bonusStartCount;
                             nmlPlayGame = 0;
                             subMain.BonusStart(bnsCode);
                             mnStatus = AutoMakeCode.Enum.Status.SBIG;
@@ -867,6 +871,7 @@ public class Mn : MonoBehaviour
                         case "ABIG_B":
                         case "ABIG_C":
                         case "ABIG_D":
+                            _bonusStartCount = bonusStartCount;
                             nmlPlayGame = 0;
                             subMain.BonusStart(bnsCode);
                             mnStatus = AutoMakeCode.Enum.Status.ABIG;
@@ -945,7 +950,7 @@ public class Mn : MonoBehaviour
                 break;
 
             case GameState.Payout_Now:
-                if (payoutSeg.getAnime() == false)
+                if ((payoutSeg.getAnime() == false) && (_bonusStartCount == 0))
                 {
                     gameState = GameState.BetWait;
                     subMain.PayEnd(mnStatus);

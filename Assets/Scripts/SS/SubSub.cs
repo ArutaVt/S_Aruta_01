@@ -10,10 +10,24 @@ public class SubSub : MonoBehaviour
     public GameObject LogoLampObject;
     private Logo logo;
 
+    // もういっそpublicにするからここから呼ぶことにする
+    public GameObject SevenLampObject;
+    private Logo sevenLamp;
+    public GameObject ALampObject;
+    private Logo aLamp;
+    public GameObject BarLampObject;
+    private Logo barLamp;
+    public GameObject WinLampObject;
+    private Logo winLamp;
+
     // Start is called before the first frame update
     void Start()
     {
         logo = LogoLampObject.GetComponent<Logo>();
+        sevenLamp = SevenLampObject.GetComponent<Logo>();
+        aLamp = ALampObject.GetComponent<Logo>();
+        barLamp = BarLampObject.GetComponent<Logo>();
+        winLamp = WinLampObject.GetComponent<Logo>();
         Sound.LoadSe("1BET", "00_BET音");
         Sound.LoadSe("3BET", "01_高速3BET音");
         Sound.LoadSe("WAIT", "02_ウエイト音");
@@ -31,6 +45,7 @@ public class SubSub : MonoBehaviour
         Sound.LoadSe("REACH_A", "14_テンパイ音1");
         Sound.LoadSe("REACH_B", "15_テンパイ音2");
         Sound.LoadSe("REACH_C", "16_SPテンパイ音");
+        Sound.LoadSe("BONUS_LAMP", "17_告知音");
         Sound.LoadSe("EV_STOP_1", "20_演出音1");
         Sound.LoadSe("EV_STOP_2", "21_演出音2");
         Sound.LoadSe("EV_STOP_3", "22_演出音3");
@@ -48,4 +63,50 @@ public class SubSub : MonoBehaviour
     /// </summary>
     /// <param name="color"></param>
     public void LogoColor(Color color) { logo.setColor(color); }
+
+    /// <summary>
+    /// 全てのボーナスランプ
+    /// </summary>
+    public void BonusLampAllOff()
+    {
+        sevenLamp.lampOff();
+        aLamp.lampOff();
+        barLamp.lampOff();
+        winLamp.lampOff();
+    }
+
+    /// <summary>
+    /// ボーナスランプ
+    /// </summary>
+    public enum BonusLamp
+    {
+        Seven,A,Bar
+    }
+
+    /// <summary>
+    /// 指定のボーナスランプを点灯させる
+    /// </summary>
+    /// <param name="lamp"></param>
+    public void BonusLampOn(BonusLamp lamp)
+    {
+        winLamp.lampOn();
+
+        switch (lamp)
+        {
+            case BonusLamp.Seven:
+                sevenLamp.lampOn();
+                sevenLamp.flashStart(Color.white);
+                break;
+            case BonusLamp.A:
+                aLamp.lampOn();
+                aLamp.flashStart(Color.white);
+                break;
+            case BonusLamp.Bar:
+                barLamp.lampOn();
+                barLamp.flashStart(Color.white);
+                break;
+            default:
+                break;
+        }
+    }
 }
