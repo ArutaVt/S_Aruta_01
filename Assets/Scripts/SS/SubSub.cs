@@ -109,4 +109,29 @@ public class SubSub : MonoBehaviour
                 break;
         }
     }
+
+    public void ReelLightOff(ReelController.Reel_ID reel)
+    {
+        switch (reel)
+        {
+            case ReelController.Reel_ID.Left:
+                Mn.leftReel.LightOff();
+                break;
+            case ReelController.Reel_ID.Center:
+                Mn.centerReel.LightOff();
+                break;
+            case ReelController.Reel_ID.Right:
+                Mn.rightReel.LightOff();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void ReelLightOn()
+    {
+        Mn.leftReel.LightOn();
+        Mn.centerReel.LightOn();
+        Mn.rightReel.LightOn();
+    }
 }

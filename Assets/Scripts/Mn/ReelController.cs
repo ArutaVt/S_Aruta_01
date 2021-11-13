@@ -36,6 +36,9 @@ public class ReelController : MonoBehaviour
     // 停止コマ(中段
     private int _stopComa = 0;
 
+    // リール画像
+    private UnityEngine.UI.Image image;
+
     // リールステータス
     public enum ReelState
     {
@@ -66,6 +69,7 @@ public class ReelController : MonoBehaviour
     {
         pos = GetComponent<RectTransform>();         // 現在座標取得
         pos.localPosition = new Vector3(pos.localPosition.x, (startComa) * (ReelSize / MaxComa), pos.localPosition.z);    // 初期座標
+        image = GetComponent<UnityEngine.UI.Image>();   // 画像データ取得
     }
 
     // Update is called once per frame
@@ -134,6 +138,9 @@ public class ReelController : MonoBehaviour
                 break;
         }
     }
+
+    public void LightOn(){ image.color = Color.white; }
+    public void LightOff() { image.color = Color.gray; }
 
     // 回転開始
     public void ReelStart()

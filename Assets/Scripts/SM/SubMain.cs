@@ -29,6 +29,7 @@ class SubMain
     private bool bonusSoundChangeFlg = false;
     private BonusSound bonusSound;
     private int naibuCnt = 0;
+    private GameObject scoreBoard;
 
     public BonusType bonustype = BonusType.BB1;
     public enum BonusType
@@ -51,6 +52,7 @@ class SubMain
         GameObject gameObject = GameObject.Find("Main");
         subSub = gameObject.GetComponent<SubSub>();
         bonusSound = gameObject.GetComponent<BonusSound>();
+        scoreBoard = GameObject.Find("ScoreBoard");
         //nmlGame = GameObject.Find("NmlGame").GetComponent<Text>();
         //nmlGame.text = string.Format("{0:D3}", Sim.DdmVariable.NmlGame) + "G";
         //LastSetText = GameObject.Find("LastGame_SetNum");
@@ -179,8 +181,13 @@ class SubMain
                 break;
         }
 
-        // 停止音演出抽せん
-        smLot.lotA5();
+        // 停止音演出有無
+        smLot.a5_Result = SMLot.A5_Result.None;
+        if (smLot.lotA7() == SMLot.A7_Result.Hit)
+        {
+            // 停止音演出抽せん
+            smLot.lotA5();
+        }
 
         switch (Sim.DdmVariable.StartDdmMode)
         {
@@ -249,7 +256,8 @@ class SubMain
     private bool jacGameFlg = false;
     public void PayOut(List<Mn.CmbRecode> list, int betnum, AutoMakeCode.Enum.Status state)
     {
-        if(smLot.a5_Result == SMLot.A5_Result.S123_Off) subSub.LogoColor(Color.gray);
+        subSub.ReelLightOn();
+        if (smLot.a5_Result == SMLot.A5_Result.S123_Off) subSub.LogoColor(Color.gray);
 
         List<string> paysound = new List<string>();
         foreach (Mn.CmbRecode item in list)
@@ -391,6 +399,7 @@ class SubMain
 
     public void PayEnd(AutoMakeCode.Enum.Status state)
     {
+
         // ボーナス中のゲーム数をカウントしてBGMを切り替えます
         switch (state)
         {
@@ -505,6 +514,7 @@ class SubMain
                     case SMLot.A5_Result.S123_On:
                     case SMLot.A5_Result.S123_Off:
                         Sound.PlaySe("EV_STOP_1", 0.2f, 0);
+                        subSub.ReelLightOff(reel);
                         break;
                     default:
                         Sound.PlaySe("STOP", 0.2f, 0);
@@ -519,6 +529,7 @@ class SubMain
                     case SMLot.A5_Result.S123_On:
                     case SMLot.A5_Result.S123_Off:
                         Sound.PlaySe("EV_STOP_2", 0.2f, 0);
+                        subSub.ReelLightOff(reel);
                         break;
                     default:
                         Sound.PlaySe("STOP", 0.2f, 0);
@@ -629,10 +640,12 @@ class SubMain
                     case SMLot.A5_Result.S123_On:
                         subSub.LogoColor(Color.gray);
                         Sound.PlaySe("EV_STOP_3", 0.2f, 0);
+                        subSub.ReelLightOff(reel);
                         break;
                     case SMLot.A5_Result.S123:
                     case SMLot.A5_Result.S123_Off:
                         Sound.PlaySe("EV_STOP_3", 0.2f, 0);
+                        subSub.ReelLightOff(reel);
                         break;
                     default:
                         Sound.PlaySe("STOP", 0.2f, 0);
@@ -661,6 +674,7 @@ class SubMain
     
     public void GameEnd()
     {
+
         if (bnsEndflg == true)
         {
             bnsEndflg = false;
@@ -814,25 +828,34 @@ class SubMain
     /// </summary>
     public void UpData()
     {
-       //if( LastSetText.activeSelf == true)
-       // {
-       //     switch (Sim.DdmVariable.StartDdmMode)
-       //     {
-       //         case Sim.DDMMODE.Bns:
-       //         case Sim.DDMMODE.AtBns:
-       //             LastSetText.GetComponent<Text>().text = "Last " + Sim.DdmVariable.BnsGame;
-       //             break;
-       //         case Sim.DDMMODE.Rush:
-       //             LastSetText.GetComponent<Text>().text = "Last " + data.rushGame + "\n" + "Set " + data.setNum;
-       //             break;
-       //     }
-       // }
-       //if(GetMedal.activeSelf == true)
-       // {
-       //     GetMedal.GetComponent<Text>().text = "Total " + data.getmedal;
-       // }
+        //if( LastSetText.activeSelf == true)
+        // {
+        //     switch (Sim.DdmVariable.StartDdmMode)
+        //     {
+        //         case Sim.DDMMODE.Bns:
+        //         case Sim.DDMMODE.AtBns:
+        //             LastSetText.GetComponent<Text>().text = "Last " + Sim.DdmVariable.BnsGame;
+        //             break;
+        //         case Sim.DDMMODE.Rush:
+        //             LastSetText.GetComponent<Text>().text = "Last " + data.rushGame + "\n" + "Set " + data.setNum;
+        //             break;
+        //     }
+        // }
+        //if(GetMedal.activeSelf == true)
+        // {
+        //     GetMedal.GetComponent<Text>().text = "Total " + data.getmedal;
+        // }
 
-       if(Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D))
+        {
+            scoreBoard.SetActive(true);
+        }
+        else
+        {
+            scoreBoard.SetActive(false);
+        }
+
+        if (Input.GetKey(KeyCode.D))
         {
             DispData();
         }
@@ -877,32 +900,32 @@ class SubMain
         //LastSetText.GetComponent<Text>().text += Sim.DdmVariable.Settei + "\n";
         //LastSetText.GetComponent<Text>().color = Color.red;
 
-        if(Input.GetKeyDown(KeyCode.S) == true)
-        {
-            switch (Sim.DdmVariable.Settei)
-            {
-                case Sim.SETTEI.Settei1:
-                    Sim.DdmVariable.Settei = Sim.SETTEI.Settei2;
-                    break;
-                case Sim.SETTEI.Settei2:
-                    Sim.DdmVariable.Settei = Sim.SETTEI.Settei3;
-                    break;
-                case Sim.SETTEI.Settei3:
-                    Sim.DdmVariable.Settei = Sim.SETTEI.Settei4;
-                    break;
-                case Sim.SETTEI.Settei4:
-                    Sim.DdmVariable.Settei = Sim.SETTEI.Settei5;
-                    break;
-                case Sim.SETTEI.Settei5:
-                    Sim.DdmVariable.Settei = Sim.SETTEI.Settei6;
-                    break;
-                case Sim.SETTEI.Settei6:
-                    Sim.DdmVariable.Settei = Sim.SETTEI.Settei1;
-                    break;
-                default:
-                    break;
-            }
-        }
+        //if(Input.GetKeyDown(KeyCode.S) == true)
+        //{
+        //    switch (Sim.DdmVariable.Settei)
+        //    {
+        //        case Sim.SETTEI.Settei1:
+        //            Sim.DdmVariable.Settei = Sim.SETTEI.Settei2;
+        //            break;
+        //        case Sim.SETTEI.Settei2:
+        //            Sim.DdmVariable.Settei = Sim.SETTEI.Settei3;
+        //            break;
+        //        case Sim.SETTEI.Settei3:
+        //            Sim.DdmVariable.Settei = Sim.SETTEI.Settei4;
+        //            break;
+        //        case Sim.SETTEI.Settei4:
+        //            Sim.DdmVariable.Settei = Sim.SETTEI.Settei5;
+        //            break;
+        //        case Sim.SETTEI.Settei5:
+        //            Sim.DdmVariable.Settei = Sim.SETTEI.Settei6;
+        //            break;
+        //        case Sim.SETTEI.Settei6:
+        //            Sim.DdmVariable.Settei = Sim.SETTEI.Settei1;
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //}
     }
 }
 

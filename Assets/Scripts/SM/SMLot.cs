@@ -36,6 +36,8 @@ public class SMLot
         green_flash,    // —Îƒtƒ‰ƒbƒVƒ…
     }
 
+    public enum A7_Result { None, Hit }
+
     private List<LotData> lotDatas;
 
     private string _lotname;
@@ -135,6 +137,18 @@ public class SMLot
         if (Mn.hitBnsGameFlg == true) table_Y_Index = 1;
         else table_Y_Index = 0;
         A6_Result result = (A6_Result)lot(6, table_X_Index, table_Y_Index, box_X_Index);
+        Debug.Log(_lotname + ":" + result);
+        return result;
+    }
+
+    public A7_Result lotA7()
+    {
+        int table_X_Index = 0;
+        int table_Y_Index = 0;
+        int box_X_Index = (int)Mn.bnsCode;
+        if (Mn.hitBnsGameFlg == true) table_Y_Index = 1;
+        else table_Y_Index = 0;
+        A7_Result result = (A7_Result)lot(7, table_X_Index, table_Y_Index, box_X_Index);
         Debug.Log(_lotname + ":" + result);
         return result;
     }

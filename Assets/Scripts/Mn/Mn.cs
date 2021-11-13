@@ -850,7 +850,13 @@ public class Mn : MonoBehaviour
                 {
                     Debug.Log(item.name);
                     // リプレイが作動した場合はBetスキップ
-                    if(item.replay == true) gameState = GameState.LeverWait;
+                    if (item.replay == true)
+                    {
+                        gameState = GameState.LeverWait;
+                        subMain.PayEnd(mnStatus);
+                        subMain.GameEnd();
+                    }
+
                     pay += item.pay[(int)betType];
                     if (pay > 15) pay = 15;     // 15枚以上は超えないよう補正
 
@@ -1241,44 +1247,44 @@ public class Mn : MonoBehaviour
 
     private void AutoPlayFunc()
     {
-        switch (autoPlayType)
-        {
-            case AutoPlayType.None:
-                if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.Infinity;
-                break;
-            case AutoPlayType.Infinity:
-                if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
-                break;
-            case AutoPlayType.BnsHit:
-                if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
-                if (Sim.DdmVariable.StartDdmMode == Sim.DDMMODE.BnsWait) autoPlayType = AutoPlayType.None;
-                break;
-            case AutoPlayType.RareHit:
-                if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
-                if (gameState == GameState.StopWait)
-                {
-                    switch (Sim.DdmVariable.FrtCode)
-                    {
-                        case Sim.FRT_CODE.Chance:
-                        case Sim.FRT_CODE.KyoChe:
-                        case Sim.FRT_CODE.JakuChe:
-                        case Sim.FRT_CODE.Suika:
-                            autoPlayType = AutoPlayType.None;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                break;
-            default:
-                break;
-        }
+        //switch (autoPlayType)
+        //{
+        //    case AutoPlayType.None:
+        //        if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.Infinity;
+        //        break;
+        //    case AutoPlayType.Infinity:
+        //        if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
+        //        break;
+        //    case AutoPlayType.BnsHit:
+        //        if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
+        //        if (Sim.DdmVariable.StartDdmMode == Sim.DDMMODE.BnsWait) autoPlayType = AutoPlayType.None;
+        //        break;
+        //    case AutoPlayType.RareHit:
+        //        if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
+        //        if (gameState == GameState.StopWait)
+        //        {
+        //            switch (Sim.DdmVariable.FrtCode)
+        //            {
+        //                case Sim.FRT_CODE.Chance:
+        //                case Sim.FRT_CODE.KyoChe:
+        //                case Sim.FRT_CODE.JakuChe:
+        //                case Sim.FRT_CODE.Suika:
+        //                    autoPlayType = AutoPlayType.None;
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //        }
+        //        break;
+        //    default:
+        //        break;
+        //}
 
-        if(Input.GetKey(KeyCode.A) == true)
-        {
-            if (Input.GetKeyDown(KeyCode.R) == true) autoPlayType = AutoPlayType.RareHit;
-            if (Input.GetKeyDown(KeyCode.B) == true) autoPlayType = AutoPlayType.BnsHit;
-        }
+        //if(Input.GetKey(KeyCode.A) == true)
+        //{
+        //    if (Input.GetKeyDown(KeyCode.R) == true) autoPlayType = AutoPlayType.RareHit;
+        //    if (Input.GetKeyDown(KeyCode.B) == true) autoPlayType = AutoPlayType.BnsHit;
+        //}
     }
 
     List<ReelController.Reel_ID> stopList = new List<ReelController.Reel_ID>();
