@@ -411,6 +411,7 @@ public class Mn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Sim.DdmVariable.HaveCoin = 50;
         leftReel = leftReelObject.GetComponent<ReelController>();
         centerReel = centerReelObject.GetComponent<ReelController>();
         rightReel = rightReelObject.GetComponent<ReelController>();
@@ -490,6 +491,7 @@ public class Mn : MonoBehaviour
                         case AutoMakeCode.Enum.Status.SBIGStandby:
                         case AutoMakeCode.Enum.Status.RBStandby:
                         case AutoMakeCode.Enum.Status.Nml:
+                            bonusSeg.setNum(0, "D3", false);    // カウンター初期化
                             betType = BetType._3Bet;
                             if (creditSeg.getNum() < 3) creditSeg.setNum(0);
                             else creditSeg.setNum(creditSeg.getNum() - 3);
@@ -502,6 +504,7 @@ public class Mn : MonoBehaviour
                             if (creditSeg.getNum() < 1) creditSeg.setNum(0);
                             else creditSeg.setNum(creditSeg.getNum() - 1);
                             Sim.DdmVariable.In += 1;
+                            Sim.DdmVariable.BnsGet -= 1;
                             break;
                         default:
                             break;
@@ -516,7 +519,21 @@ public class Mn : MonoBehaviour
                     // Lever処理
                     Debug.Log("Lever");
 
-                    Sim.DdmVariable.startMnSts = mnStatus;                    
+                    Sim.DdmVariable.startMnSts = mnStatus;
+                    Sim.DdmVariable.TotalGames++;
+
+                    switch (mnStatus)
+                    {
+                        case AutoMakeCode.Enum.Status.ABIGStandby:
+                        case AutoMakeCode.Enum.Status.SBIGStandby:
+                        case AutoMakeCode.Enum.Status.RBStandby:
+                        case AutoMakeCode.Enum.Status.Nml:
+                            Sim.DdmVariable.NmlGame++;
+                            Sim.DdmVariable.TotalNmlGames++;
+                            break;
+                        default:
+                            break;
+                    }
 
                     switch (debugType)
                     {
@@ -864,6 +881,8 @@ public class Mn : MonoBehaviour
                     switch (item.name)
                     {
                         case "7BIG":
+                            Sim.DdmVariable.BnsGet = 0;
+                            Sim.DdmVariable.SBIG++;
                             _bonusStartCount = bonusStartCount;
                             nmlPlayGame = 0;
                             subMain.BonusStart(bnsCode);
@@ -877,17 +896,24 @@ public class Mn : MonoBehaviour
                         case "ABIG_B":
                         case "ABIG_C":
                         case "ABIG_D":
-                            _bonusStartCount = bonusStartCount;
-                            nmlPlayGame = 0;
-                            subMain.BonusStart(bnsCode);
-                            mnStatus = AutoMakeCode.Enum.Status.ABIG;
-                            bnsMedal = item.bnsMedal;
-                            bnsCode = AutoMakeCode.Enum.BnsCode.Hazure;
-                            bonusSeg.setNum(bnsMedal + 1, "D3", false);
-                            debugType = DebugType.Normal;
+                            if(mnStatus != AutoMakeCode.Enum.Status.ABIG)
+                            {
+                                Sim.DdmVariable.BnsGet = 0;
+                                Sim.DdmVariable.ABIG++;
+                                _bonusStartCount = bonusStartCount;
+                                nmlPlayGame = 0;
+                                subMain.BonusStart(bnsCode);
+                                mnStatus = AutoMakeCode.Enum.Status.ABIG;
+                                bnsMedal = item.bnsMedal;
+                                bnsCode = AutoMakeCode.Enum.BnsCode.Hazure;
+                                bonusSeg.setNum(bnsMedal + 1, "D3", false);
+                                debugType = DebugType.Normal;
+                            }
                             break;
                         case "REG_1":
                         case "REG_2":
+                            Sim.DdmVariable.BnsGet = 0;
+                            Sim.DdmVariable.RB++;
                             nmlPlayGame = 0;
                             subMain.BonusStart(bnsCode);
                             mnStatus = AutoMakeCode.Enum.Status.RB;
@@ -934,12 +960,15 @@ public class Mn : MonoBehaviour
                     case AutoMakeCode.Enum.Status.ABIG:
                     case AutoMakeCode.Enum.Status.SBIG:
                     case AutoMakeCode.Enum.Status.RB:
+                        Sim.DdmVariable.BnsOut += (ulong)pay;
+                        Sim.DdmVariable.BnsGet += pay;
                         bnsMedal -= pay;
                         if(bnsMedal < 0)
                         {
+                            Sim.DdmVariable.NmlGame = 0;
                             subMain.BonudEnd();
                             mnStatus = AutoMakeCode.Enum.Status.Nml;
-                            bonusSeg.setNum(0, "D3");
+                            bonusSeg.setNum(0, "D3", false);
                         }
                         else
                         {
@@ -958,6 +987,12 @@ public class Mn : MonoBehaviour
             case GameState.Payout_Now:
                 if ((payoutSeg.getAnime() == false) && (_bonusStartCount == 0))
                 {
+                    // ボーナス終了の払い出し完了で獲得枚数表示
+                    if (Sim.DdmVariable.startMnSts != AutoMakeCode.Enum.Status.Nml && mnStatus == AutoMakeCode.Enum.Status.Nml)
+                    {
+                        bonusSeg.setNum(Sim.DdmVariable.BnsGet, "D3", false);
+                    }
+
                     gameState = GameState.BetWait;
                     subMain.PayEnd(mnStatus);
                     subMain.GameEnd();

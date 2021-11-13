@@ -8,8 +8,6 @@ namespace Sim
 		public static Int16 YuuriGame; //	有利区間G数
 		public static Int16 MYCounter; //	MYカウンター
 		public static SETTEI Settei;   //	設定値
-		public static UInt64 In;   //	In枚数
-		public static UInt64 Out;  //	Out枚数
 		public static FRT_CODE FrtCode;    //	条件装置
 		public static DDMMODE DdmMode; //	出玉状態
 		public static DDMMODE StartDdmMode;    //	開始時出玉状態
@@ -22,11 +20,22 @@ namespace Sim
 		public static RUSH_STS AtSts;  //	継続ランク
 		public static Int16 ZenchoGame;    //	前兆G数
 		public static Int16 RushGame;  //	RushG数
-		public static Int16 NmlGame;	// 通常消化G数
 
 		public static bool RushStartFlg;		// Rush開始フラグ
 		public static FREEZE_TYPE FreezeType;   // フリーズタイプ
 		public static bool FreezeFlg;           // フリーズ発生フラグ
+
+		public static UInt64 SBIG;				// SBIG
+		public static UInt64 ABIG;				// ABIG
+		public static UInt64 RB;				// RB
+		public static UInt64 In;				// In枚数
+		public static UInt64 Out;				// Out枚数
+		public static UInt64 BnsOut;			// Out枚数
+		public static UInt64 TotalGames;		// 総ゲーム数
+		public static UInt64 TotalNmlGames;		// 総通常ゲーム数
+		public static UInt64 NmlGame;           // 通常消化G数
+		public static UInt64 HaveCoin;          // 持ちコイン
+		public static int BnsGet;				// ボーナス中獲得枚数
 
 		public static int[,] deme = new int[3, 3];
 
