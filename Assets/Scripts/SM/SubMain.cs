@@ -561,6 +561,10 @@ class SubMain
                                         break;
                                 }
                             }
+                            else
+                            {
+                                Sound.PlaySe("REACH_B", 0.2f, 1);
+                            }
                         }
                         else if (data.IsReach(new int[] { 0 }) || data.IsReach(new int[] { 2 }))
                         {
@@ -590,8 +594,16 @@ class SubMain
                                         break;
                                 }
                             }
+                            else
+                            {
+                                Sound.PlaySe("REACH_A", 0.2f, 1);
+                            }
                         }
-                        else if (data.IsReach(new int[] { 1, 8 }) || data.IsReach(new int[] { 2 }))
+                        else if (data.IsReach(new int[] { 1, 8 }))
+                        {
+                            Sound.PlaySe("REACH_B", 0.2f, 1);
+                        }
+                        else if(data.IsReach(new int[] { 2 }))
                         {
                             Sound.PlaySe("REACH_A", 0.2f, 1);
                         }
@@ -619,14 +631,29 @@ class SubMain
                                         break;
                                 }
                             }
+                            else
+                            {
+                                Sound.PlaySe("REACH_A", 0.2f, 1);
+                            }
                         }
-                        else if (data.IsReach(new int[] { 1, 8 }) || data.IsReach(new int[] { 0 }))
+                        else if (data.IsReach(new int[] { 1, 8 }))
+                        {
+                            Sound.PlaySe("REACH_B", 0.2f, 1);
+                        }
+                        else if (data.IsReach(new int[] { 0 }))
                         {
                             Sound.PlaySe("REACH_A", 0.2f, 1);
                         }
                         break;
                     case AutoMakeCode.Enum.Status.Nml:
-                        if (data.IsReach(new int[] { 1, 8 }) || data.IsReach(new int[] { 0 }) || data.IsReach(new int[] { 2 })) Sound.PlaySe("REACH_A", 0.2f);
+                        if (data.IsReach(new int[] { 0 }) || data.IsReach(new int[] { 2 }))
+                        {
+                            Sound.PlaySe("REACH_A", 0.2f, 1);
+                        }
+                        else if (data.IsReach(new int[] { 1, 8 }))
+                        {
+                            Sound.PlaySe("REACH_B", 0.2f, 1);
+                        }
                         break;
                     default:
                         break;
