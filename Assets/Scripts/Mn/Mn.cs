@@ -22,6 +22,7 @@ public class Mn : MonoBehaviour
         AllStop,
         Payout,
         Payout_Now,
+        BnsEndWait,
     }
 
     /// <summary>
@@ -990,12 +991,38 @@ public class Mn : MonoBehaviour
                     // ボーナス終了の払い出し完了で獲得枚数表示
                     if (Sim.DdmVariable.startMnSts != AutoMakeCode.Enum.Status.Nml && mnStatus == AutoMakeCode.Enum.Status.Nml)
                     {
+                        gameState = GameState.BnsEndWait;
+
+                        switch (Sim.DdmVariable.startMnSts)
+                        {
+                            case AutoMakeCode.Enum.Status.ABIG:
+                            case AutoMakeCode.Enum.Status.SBIG:
+                                _bonusStartCount = bonusStartCount;     // BIG終了時は指定フレームwait
+                                break;
+                            case AutoMakeCode.Enum.Status.RB:
+                                // RBは即終了
+                                break;
+                            default:
+                                break;
+                        }
+
+                        subMain.PayEnd(mnStatus);
+                        subMain.GameEnd();
                         bonusSeg.setNum(Sim.DdmVariable.BnsGet, "D3", false);
                     }
+                    else
+                    {
+                        gameState = GameState.BetWait;
+                        subMain.PayEnd(mnStatus);
+                        subMain.GameEnd();
+                    }
+                }
+                break;
 
+            case GameState.BnsEndWait:
+                if(_bonusStartCount == 0)
+                {
                     gameState = GameState.BetWait;
-                    subMain.PayEnd(mnStatus);
-                    subMain.GameEnd();
                 }
                 break;
 
@@ -1022,11 +1049,14 @@ public class Mn : MonoBehaviour
                 {
                     Debug.Log("ウェイトON");
                     WaitCount = 180;
+                    bonusStartCount = 240;
                 }
                 else
                 {
                     _WaitCount = 0;
                     WaitCount = 0;
+                    bonusStartCount = 0;
+                    _bonusStartCount = 0;
                     Debug.Log("ウェイトOFF");
                 }
             }
