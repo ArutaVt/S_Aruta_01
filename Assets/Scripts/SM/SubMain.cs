@@ -878,29 +878,29 @@ class SubMain
             Text tmptext = scoreBoard.GetComponentInChildren<Text>();
 
 
-            if(Sim.DdmVariable.SBIG > 0) tmptext.text = $"{"SBIG",-16} : {Sim.DdmVariable.SBIG,-3} : (1/{(double)Sim.DdmVariable.TotalNmlGames / Sim.DdmVariable.SBIG,1:F})\n";
-            else tmptext.text = $"{"SBIG",-16} : 0 : (1/0)\n";
+            if(Sim.DdmVariable.SBIG > 0) tmptext.text = $"{"SBIG",-16}:{Sim.DdmVariable.SBIG,-3} (1/{(double)Sim.DdmVariable.TotalNmlGames / Sim.DdmVariable.SBIG,1:F})\n";
+            else tmptext.text = $"{"SBIG",-16}:0 (1/0)\n";
 
-            if(Sim.DdmVariable.ABIG > 0) tmptext.text += $"{"ABIG",-16} : {Sim.DdmVariable.ABIG,-3} : (1/{(double)Sim.DdmVariable.TotalNmlGames / Sim.DdmVariable.ABIG,1:F})\n";
-            else tmptext.text += $"{"ABIG",-16} : 0 : (1/0)\n";
+            if(Sim.DdmVariable.ABIG > 0) tmptext.text += $"{"ABIG",-16}:{Sim.DdmVariable.ABIG,-3} (1/{(double)Sim.DdmVariable.TotalNmlGames / Sim.DdmVariable.ABIG,1:F})\n";
+            else tmptext.text += $"{"ABIG",-16}:0 (1/0)\n";
             
-            if(Sim.DdmVariable.RB > 0) tmptext.text += $"{"RB",-16} : {Sim.DdmVariable.RB,-3} : (1/{(double)Sim.DdmVariable.TotalNmlGames / Sim.DdmVariable.RB,1:F})\n";
-            else tmptext.text += $"{"RB",-16} : 0 : (1/0)\n";
+            if(Sim.DdmVariable.RB > 0) tmptext.text += $"{"RB",-16}:{Sim.DdmVariable.RB,-3} (1/{(double)Sim.DdmVariable.TotalNmlGames / Sim.DdmVariable.RB,1:F})\n";
+            else tmptext.text += $"{"RB",-16}:0 (1/0)\n";
 
-            tmptext.text += $"{"IN",-8} : {Sim.DdmVariable.In}\n";
+            tmptext.text += $"{"IN",-16}:{Sim.DdmVariable.In}\n";
 
-            if(Sim.DdmVariable.In > 0) tmptext.text += $"{"OUT",-16} : {Sim.DdmVariable.Out} : ({(double)Sim.DdmVariable.Out / Sim.DdmVariable.In,3:P})\n";
-            else tmptext.text += $"{"OUT",-16} : 0 : (0.00%)\n";
+            if(Sim.DdmVariable.In > 0) tmptext.text += $"{"OUT",-16}:{Sim.DdmVariable.Out}({(double)Sim.DdmVariable.Out / Sim.DdmVariable.In,3:P})\n";
+            else tmptext.text += $"{"OUT",-16}:0 (0.00%)\n";
 
-            if (Sim.DdmVariable.Out > 0) tmptext.text += $"{"役物比率",-16} : ({(double)Sim.DdmVariable.BnsOut / Sim.DdmVariable.Out,3:P})\n";
+            if (Sim.DdmVariable.Out > 0) tmptext.text += $"{"役物比率",-12}:{(double)Sim.DdmVariable.BnsOut / Sim.DdmVariable.Out,3:P}\n";
 
-            tmptext.text += $"{"TotalGames",-16} : {Sim.DdmVariable.TotalGames}\n";
-            tmptext.text += $"{"TotalNmlGames", -16} : {Sim.DdmVariable.TotalNmlGames}\n";
-            tmptext.text += $"{"NmlGames", -16} : {Sim.DdmVariable.NmlGame}\n";
+            tmptext.text += $"{"TotalGames",-16}:{Sim.DdmVariable.TotalGames}\n";
+            tmptext.text += $"{"TotalNmlGames", -16}:{Sim.DdmVariable.TotalNmlGames}\n";
+            tmptext.text += $"{"NmlGames", -16}:{Sim.DdmVariable.NmlGame}\n";
 
             UInt64 bnscnt = Sim.DdmVariable.SBIG + Sim.DdmVariable.ABIG + Sim.DdmVariable.RB;
-            if(bnscnt > 0) tmptext.text += $"{"ボーナス合算", -16} : 1/{Sim.DdmVariable.TotalNmlGames / bnscnt,1:F}\n";
-            tmptext.text += $"{"差枚数", -16} : {(Int64)Sim.DdmVariable.Out - (Int64)Sim.DdmVariable.In}枚";
+            if(bnscnt > 0) tmptext.text += $"{"Bonus", -16}:1/{Sim.DdmVariable.TotalNmlGames / bnscnt,1:F}\n";
+            tmptext.text += $"{"Medal", -16}:{(Int64)Sim.DdmVariable.Out - (Int64)Sim.DdmVariable.In}枚";
 
             scoreBoard.SetActive(true);
         }

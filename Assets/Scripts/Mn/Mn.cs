@@ -328,6 +328,7 @@ public class Mn : MonoBehaviour
     public static ReelController leftReel;
     public static ReelController centerReel;
     public static ReelController rightReel;
+    public static BetLampControler betLamp;
     public static GameState gameState;
     public static int stopCnt = 0;
     public static StopSeq stopSeq;
@@ -409,6 +410,11 @@ public class Mn : MonoBehaviour
     private SegControle bonusSeg;
     private SegControle payoutSeg;
 
+    // システムランプ
+    private Logo waitLamp;
+    private Logo startLamp;
+    private Logo replayLamp;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -419,6 +425,7 @@ public class Mn : MonoBehaviour
         subMain = new SubMain();
         // Sim.DdmVariable.Settei = Sim.SETTEI.Settei1;
         settei = AutoMakeCode.Enum.Settei._6;
+        betLamp = GameObject.Find("BetLamp").GetComponent<BetLampControler>();
 
         // 制御データ読み込み
         {
@@ -446,10 +453,21 @@ public class Mn : MonoBehaviour
             bnsFrtLot = JsonConvert.DeserializeObject<BnsFrtLot>(inputString.text);
         }
 
+        // セグ
         {
             creditSeg = segObjects[0].GetComponent<SegControle>();
             bonusSeg = segObjects[1].GetComponent<SegControle>();
             payoutSeg = segObjects[2].GetComponent<SegControle>();
+        }
+
+        // システムランプ
+        {
+            replayLamp = GameObject.Find("Replay").GetComponent<Logo>();
+            startLamp = GameObject.Find("Start").GetComponent<Logo>();
+            waitLamp = GameObject.Find("Wait").GetComponent<Logo>();
+            replayLamp.lampOff();
+            startLamp.lampOff();
+            waitLamp.lampOff();
         }
 
         // ボーナス用のセグは3桁表示
@@ -482,8 +500,8 @@ public class Mn : MonoBehaviour
                     // Bet処理
                     Debug.ClearDeveloperConsole();
                     Debug.Log("Bet");
+                    startLamp.lampOn();
                     gameState = GameState.LeverWait;
-
                     payoutSeg.setNum(0, "D2", false);
 
                     switch (mnStatus)
@@ -497,6 +515,7 @@ public class Mn : MonoBehaviour
                             if (creditSeg.getNum() < 3) creditSeg.setNum(0);
                             else creditSeg.setNum(creditSeg.getNum() - 3);
                             Sim.DdmVariable.In += 3;
+                            betLamp.SetBet(BetLampControler.BetNum._3Bet);
                             break;
                         case AutoMakeCode.Enum.Status.ABIG:
                         case AutoMakeCode.Enum.Status.SBIG:
@@ -506,6 +525,7 @@ public class Mn : MonoBehaviour
                             else creditSeg.setNum(creditSeg.getNum() - 1);
                             Sim.DdmVariable.In += 1;
                             Sim.DdmVariable.BnsGet -= 1;
+                            betLamp.SetBet(BetLampControler.BetNum._1Bet);
                             break;
                         default:
                             break;
@@ -519,7 +539,7 @@ public class Mn : MonoBehaviour
                 {
                     // Lever処理
                     Debug.Log("Lever");
-
+                    startLamp.lampOff();
                     Sim.DdmVariable.startMnSts = mnStatus;
                     Sim.DdmVariable.TotalGames++;
 
@@ -626,6 +646,7 @@ public class Mn : MonoBehaviour
                     if(_WaitCount > 0)
                     {
                         Debug.Log("WaitStart");
+                        waitLamp.lampOn();
                         subMain.WaitStart();
                     }
 
@@ -680,6 +701,7 @@ public class Mn : MonoBehaviour
                         {
                             //　すべてのリールが正常駆動開始
                             subMain.ReelStart();
+                            waitLamp.lampOff();
                             gameState = GameState.StopWait;
                         }
                     }
@@ -824,6 +846,11 @@ public class Mn : MonoBehaviour
                 // PayOut処理
                 Debug.Log("PayOut");
 
+                // システムランプ初期化
+                replayLamp.lampOff();
+                waitLamp.lampOff();
+                startLamp.lampOff();
+
                 // 中段の停止位置代入
                 stopPos[1, 0] = leftReel.getComa();
                 stopPos[1, 1] = centerReel.getComa();
@@ -870,6 +897,9 @@ public class Mn : MonoBehaviour
                     // リプレイが作動した場合はBetスキップ
                     if (item.replay == true)
                     {
+                        replayLamp.lampOn();
+                        waitLamp.lampOff();
+                        startLamp.lampOn();
                         gameState = GameState.LeverWait;
                         subMain.PayEnd(mnStatus);
                         subMain.GameEnd();
@@ -1006,12 +1036,18 @@ public class Mn : MonoBehaviour
                                 break;
                         }
 
+                        replayLamp.lampOff();
+                        waitLamp.lampOff();
+                        startLamp.lampOff();
                         subMain.PayEnd(mnStatus);
                         subMain.GameEnd();
                         bonusSeg.setNum(Sim.DdmVariable.BnsGet, "D3", false);
                     }
                     else
                     {
+                        replayLamp.lampOff();
+                        waitLamp.lampOff();
+                        startLamp.lampOff();
                         gameState = GameState.BetWait;
                         subMain.PayEnd(mnStatus);
                         subMain.GameEnd();
