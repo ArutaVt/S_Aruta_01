@@ -30,6 +30,7 @@ class SubMain
     private BonusSound bonusSound;
     private int naibuCnt = 0;
     private GameObject scoreBoard;
+    private int ACount = 0;
 
     public BonusType bonustype = BonusType.BB1;
     public enum BonusType
@@ -357,6 +358,7 @@ class SubMain
                     }
                     break;
                 case "ABIG":
+                    ACount++;
                     bonusGameCnt = 0;
                     if (bonusSoundChangeFlg == true)
                     {
@@ -365,11 +367,23 @@ class SubMain
                             bonustype = BonusType.BB4;
                             bonusSound.PlayBgm(BonusSound.BonusSoundType.BB4_StartFrtJacGame);
                         }
+                        else if((ACount > 2) && (Mn.leftReel.getComa() == 1) && (Mn.centerReel.getComa() == 1) && (Mn.rightReel.getComa() == 1))
+                        {
+                            ACount = 0;
+                            bonustype = BonusType.BB4;
+                            bonusSound.PlayBgm(BonusSound.BonusSoundType.BB4_StartFrtJacGame);
+                        }
                         else
                         {
                             bonustype = BonusType.BB3;
                             bonusSound.PlayBgm(BonusSound.BonusSoundType.BB3_StartFrtJacGame);
                         }
+                    }
+                    else　if((ACount > 2) && (Mn.leftReel.getComa() == 1) && (Mn.centerReel.getComa() == 1) && (Mn.rightReel.getComa() == 1))
+                    {
+                        ACount = 0;
+                        bonustype = BonusType.BB4;
+                        bonusSound.PlayBgm(BonusSound.BonusSoundType.BB4_StartFrtJacGame);
                     }
                     else
                     {
