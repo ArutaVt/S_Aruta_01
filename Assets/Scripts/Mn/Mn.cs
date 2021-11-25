@@ -1096,6 +1096,13 @@ public class Mn : MonoBehaviour
                     Debug.Log("ウェイトOFF");
                 }
             }
+
+            // 設定変更
+            if(Input.GetKey(KeyCode.Alpha3) == true)
+            {
+                settei = AutoMakeCode.Enum.Settei._3;
+                Debug.Log("設定変更:3");
+            }
         }
 
         if (gameState == GameState.GameWait)
