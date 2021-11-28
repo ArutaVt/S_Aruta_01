@@ -193,22 +193,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'SBIG : 0
-
-    ABIG : 0
-
-    RB : 0
-
-    IN : 0
-
-    OUT : 0 (0.00%)
-
-    TotalGames
-    : 0
-
-    TotalNmlGames : 0
-
-    NmlGames : 0'
+  m_Text: 
 --- !u!222 &21681999
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1502,6 +1487,7 @@ GameObject:
   - component: {fileID: 1435184003}
   - component: {fileID: 1435184004}
   - component: {fileID: 1435184005}
+  - component: {fileID: 1435184006}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -1734,6 +1720,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1435184006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435183999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf798394404d784098725e54f33d6ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1440926820
 GameObject:
   m_ObjectHideFlags: 0
