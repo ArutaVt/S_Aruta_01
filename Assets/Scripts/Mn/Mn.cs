@@ -264,7 +264,7 @@ public class Mn : MonoBehaviour
             name = "ベル",
             zugara = new int[]{ 4,4,4 },
             bnsMedal = 0,
-            pay = new int[]{ 15, 8 },
+            pay = new int[]{ 15, 10 },
             replay = false,
         },
 
@@ -273,7 +273,7 @@ public class Mn : MonoBehaviour
             name = "ベル代替",
             zugara = new int[]{ 2,4,4 },
             bnsMedal = 0,
-            pay = new int[]{ 15, 8 },
+            pay = new int[]{ 15, 10 },
             replay = false,
         },
 
@@ -423,8 +423,31 @@ public class Mn : MonoBehaviour
         centerReel = centerReelObject.GetComponent<ReelController>();
         rightReel = rightReelObject.GetComponent<ReelController>();
         subMain = new SubMain();
-        // Sim.DdmVariable.Settei = Sim.SETTEI.Settei1;
-        settei = AutoMakeCode.Enum.Settei._6;
+
+        settei = (AutoMakeCode.Enum.Settei)rand.Next(6);
+
+        // 海堂アタルDay
+        if((System.DateTime.Now.Month == 11) && (System.DateTime.Now.Day == 24))
+        {
+            // 90%で設定1
+            if(rand.Next(10) == 0)
+            {
+                settei = AutoMakeCode.Enum.Settei._6;
+            }
+            else
+            {
+                settei = AutoMakeCode.Enum.Settei._1;
+            }
+        }
+        else if((System.DateTime.Now.Day == 7) || (System.DateTime.Now.Day == 17) || (System.DateTime.Now.Day == 27))
+        {
+            // 7/17/27は50%で設定6
+            if (rand.Next(2) == 0)
+            {
+                settei = AutoMakeCode.Enum.Settei._6;
+            }
+        }
+
         betLamp = GameObject.Find("BetLamp").GetComponent<BetLampControler>();
 
         // 制御データ読み込み
@@ -1098,11 +1121,45 @@ public class Mn : MonoBehaviour
             }
 
             // 設定変更
-            if(Input.GetKey(KeyCode.Alpha3) == true)
+            if(Input.GetKey(KeyCode.K) == true)
             {
-                settei = AutoMakeCode.Enum.Settei._3;
-                Debug.Log("設定変更:3");
+                if(Input.GetKeyDown(KeyCode.Alpha6) == true)
+                {
+                    settei = AutoMakeCode.Enum.Settei._6;
+                    Debug.Log("設定変更:6");
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha5) == true)
+                {
+                    settei = AutoMakeCode.Enum.Settei._5;
+                    Debug.Log("設定変更:5");
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha4) == true)
+                {
+                    settei = AutoMakeCode.Enum.Settei._4;
+                    Debug.Log("設定変更:4");
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha3) == true)
+                {
+                    settei = AutoMakeCode.Enum.Settei._3;
+                    Debug.Log("設定変更:3");
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha2) == true)
+                {
+                    settei = AutoMakeCode.Enum.Settei._2;
+                    Debug.Log("設定変更:2");
+                }
+
+                if (Input.GetKeyDown(KeyCode.Alpha1) == true)
+                {
+                    settei = AutoMakeCode.Enum.Settei._1;
+                    Debug.Log("設定変更:1");
+                }
             }
+
         }
 
         if (gameState == GameState.GameWait)
