@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 class SubMain
 {
@@ -31,6 +32,9 @@ class SubMain
     private int naibuCnt = 0;
     private GameObject scoreBoard;
     private int ACount = 0;
+    private AtsumaruScoreboard scoreboard = new AtsumaruScoreboard();
+    private Ranking ranking;
+    public static bool dispSetteiFlg = false;
 
     public BonusType bonustype = BonusType.BB1;
     public enum BonusType
@@ -54,6 +58,7 @@ class SubMain
         subSub = gameObject.GetComponent<SubSub>();
         bonusSound = gameObject.GetComponent<BonusSound>();
         scoreBoard = GameObject.Find("ScoreBoard");
+        ranking = scoreBoard.GetComponent<Ranking>();
         //nmlGame = GameObject.Find("NmlGame").GetComponent<Text>();
         //nmlGame.text = string.Format("{0:D3}", Sim.DdmVariable.NmlGame) + "G";
         //LastSetText = GameObject.Find("LastGame_SetNum");
@@ -86,6 +91,9 @@ class SubMain
     }
     public void Lever(AutoMakeCode.Enum.Status state)
     {
+        // モード確定
+        ranking.ModeButtonOff();
+
         data.MnDataUpData();    // 内容整理
 
         if (state == AutoMakeCode.Enum.Status.Nml)
@@ -753,29 +761,61 @@ class SubMain
         }
 
         // 内部中のハズレをカウントしてボーナス告知をする
-        if((Mn.bnsCode != AutoMakeCode.Enum.BnsCode.Hazure) && (Mn.frtCode == AutoMakeCode.Enum.FrtCode.Hazure))
+        if((Mn.mnStatus != AutoMakeCode.Enum.Status.Nml) && (Mn.frtCode == AutoMakeCode.Enum.FrtCode.Hazure))
         {
             naibuCnt++;
+
             if(naibuCnt == 3)
             {
                 Sound.PlaySe("BONUS_LAMP", 0.2f);
 
                 // 告知ランプ点灯
-                switch (Mn.bnsCode)
+                switch (Mn.mnStatus)
                 {
-                    case AutoMakeCode.Enum.BnsCode.ABIG:
+                    case AutoMakeCode.Enum.Status.ABIGStandby:
                         subSub.BonusLampOn(SubSub.BonusLamp.A);
                         break;
-                    case AutoMakeCode.Enum.BnsCode.SBIG:
+                    case AutoMakeCode.Enum.Status.SBIGStandby:
                         subSub.BonusLampOn(SubSub.BonusLamp.Seven);
                         break;
-                    case AutoMakeCode.Enum.BnsCode.RB:
+                    case AutoMakeCode.Enum.Status.RBStandby:
                         subSub.BonusLampOn(SubSub.BonusLamp.Bar);
                         break;
                 }
             }
         }
 
+        // ランキング登録処理
+        if(dispSetteiFlg == false)
+        {
+            switch (Mn.mnMode)
+            {
+                case Mn.MnMode.Normal:
+                    if(Sim.DdmVariable.TotalNmlGames == 1000)
+                    {
+                        dispSetteiFlg = true;
+                        long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
+                        scoreboard.SendScore(1, score, true);
+                    }
+                    break;
+                case Mn.MnMode.Score:
+                    if (Sim.DdmVariable.TotalNmlGames == 100)
+                    {
+                        long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
+                        scoreboard.SendScore(2, score, true);
+                    }
+                    break;
+                case Mn.MnMode.Tricks:
+                    if (Sim.DdmVariable.TotalNmlGames == 1000)
+                    {
+                        long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
+                        scoreboard.SendScore(3, score, true);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /// <summary>
@@ -914,7 +954,19 @@ class SubMain
 
             UInt64 bnscnt = Sim.DdmVariable.SBIG + Sim.DdmVariable.ABIG + Sim.DdmVariable.RB;
             if(bnscnt > 0) tmptext.text += $"{"Bonus", -16}:1/{Sim.DdmVariable.TotalNmlGames / bnscnt,1:F}\n";
-            tmptext.text += $"{"Medal", -16}:{(Int64)Sim.DdmVariable.Out - (Int64)Sim.DdmVariable.In}枚";
+            tmptext.text += $"{"Medal", -16}:{(Int64)Sim.DdmVariable.Out - (Int64)Sim.DdmVariable.In}枚\n";
+
+            if (dispSetteiFlg == true)
+            {
+                if(Mn.mnMode == Mn.MnMode.Score)
+                {
+                    tmptext.text += $"設定:スコアアタックモード\n";
+                }
+                else if(Mn.mnMode == Mn.MnMode.Normal)
+                {
+                    tmptext.text += $"設定:{(Int64)Mn.settei + 1}\n";
+                }
+            }
 
             scoreBoard.SetActive(true);
         }

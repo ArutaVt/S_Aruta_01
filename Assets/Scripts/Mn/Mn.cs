@@ -115,6 +115,22 @@ public class Mn : MonoBehaviour
         SelectLot,      // 選択抽せん
     };
 
+    public enum MnMode
+    {
+        Normal,         // 通常のMn
+        Score,          // Scoreアタック用のMn
+        Tricks,         // 裏モノモード
+    }
+
+    public enum TrickMode
+    {
+        Low,
+        Mid,
+        High,
+        Heven_Short,
+        Heven_Normal,
+    }
+
 #endregion
 
 
@@ -351,8 +367,11 @@ public class Mn : MonoBehaviour
     // Mnの抽せんデータ
     public BnsFrtLot bnsFrtLot;
 
+    // スコアアタック用抽せんデータ
+    public BnsFrtLot scoreAttack;
+
     // 設定
-    public AutoMakeCode.Enum.Settei settei;
+    public static AutoMakeCode.Enum.Settei settei;
 
     // Mn状態
     static public AutoMakeCode.Enum.Status mnStatus;
@@ -415,6 +434,15 @@ public class Mn : MonoBehaviour
     private Logo startLamp;
     private Logo replayLamp;
 
+    // Mn抽せんモード
+    public static MnMode mnMode = MnMode.Normal;
+
+    // 裏モノ状態
+    public TrickMode trickMode = TrickMode.Mid;
+
+    // 裏モノ抽せんクラス
+    public ATypeSIM.Models.DdmLot ddmLot;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -476,6 +504,12 @@ public class Mn : MonoBehaviour
             bnsFrtLot = JsonConvert.DeserializeObject<BnsFrtLot>(inputString.text);
         }
 
+        // スコアアタック用データ読み取り
+        {
+            var inputString = Resources.Load<TextAsset>("Json/ScoreAttackMn");
+            scoreAttack = JsonConvert.DeserializeObject<BnsFrtLot>(inputString.text);
+        }
+
         // セグ
         {
             creditSeg = segObjects[0].GetComponent<SegControle>();
@@ -501,6 +535,12 @@ public class Mn : MonoBehaviour
         creditSeg.setwaitCnt(3);
         bonusSeg.setwaitCnt(3);
         payoutSeg.setwaitCnt(3);
+
+        // 裏モノ用抽せんデータ読み取り
+        {
+            var inputString = Resources.Load<TextAsset>("Json/uraDdm");
+            ddmLot = new ATypeSIM.Models.DdmLot(inputString.text);
+        }
     }
 
     /// <summary>
@@ -582,10 +622,31 @@ public class Mn : MonoBehaviour
                     switch (debugType)
                     {
                         case DebugType.Normal:
-                            // 通常抽せん
-                            lotResult = bnsFrtLot.Lot(settei, mnStatus, RT);
-                            if (bnsCode == AutoMakeCode.Enum.BnsCode.Hazure) bnsCode = lotResult.bnsCode;
-                            frtCode = lotResult.frtCode;
+
+                            switch (mnMode)
+                            {
+                                case MnMode.Normal:
+                                    // 通常抽せん
+                                    lotResult = bnsFrtLot.Lot(settei, mnStatus, RT);
+                                    if (bnsCode == AutoMakeCode.Enum.BnsCode.Hazure) bnsCode = lotResult.bnsCode;
+                                    frtCode = lotResult.frtCode;
+                                    break;
+                                case MnMode.Score:
+                                    // スコアアタック用抽せん
+                                    lotResult = scoreAttack.Lot(AutoMakeCode.Enum.Settei._6, mnStatus, RT);
+                                    if (bnsCode == AutoMakeCode.Enum.BnsCode.Hazure) bnsCode = lotResult.bnsCode;
+                                    frtCode = lotResult.frtCode;
+                                    break;
+                                case MnMode.Tricks:
+                                    // 裏モノ用抽せん
+                                    lotResult = scoreAttack.Lot(ddmLot.settei, mnStatus, RT);
+                                    if (bnsCode == AutoMakeCode.Enum.BnsCode.Hazure) bnsCode = lotResult.bnsCode;
+                                    frtCode = lotResult.frtCode;
+
+                                    break;
+                                default:
+                                    break;
+                            }
 
                             // デバッグ用
                             _frtCode = frtCode;
@@ -643,7 +704,9 @@ public class Mn : MonoBehaviour
 
                     // Mnの演出処理はここに記載
                     {
-                        //Sim.AllLever.Flow();           // 出玉処理
+                        // 裏モノレバー抽せん
+                        if(mnMode == MnMode.Tricks) ddmLot.Lever(bnsCode, frtCode, mnStatus);
+
                         // 当せん当該判定
                         if (Sim.DdmVariable.startMnSts == AutoMakeCode.Enum.Status.Nml && mnStatus != AutoMakeCode.Enum.Status.Nml)
                         {
@@ -657,9 +720,9 @@ public class Mn : MonoBehaviour
                         // 通常消化G数加算
                         if (Sim.DdmVariable.startMnSts == AutoMakeCode.Enum.Status.Nml) nmlPlayGame++;
 
-                        // // 1G目に単独ABIGでロングフリーズ
-                        // if (nmlPlayGame == 1 && hitBnsGameFlg == true && (bnsCode == AutoMakeCode.Enum.BnsCode.ABIG || bnsCode == AutoMakeCode.Enum.BnsCode.SBIG) && frtCode == AutoMakeCode.Enum.FrtCode.Hazure) Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
-                        // else Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.None;
+                        // 1G目に単独ABIGでロングフリーズ
+                        if (nmlPlayGame == 1 && hitBnsGameFlg == true && (bnsCode == AutoMakeCode.Enum.BnsCode.ABIG || bnsCode == AutoMakeCode.Enum.BnsCode.SBIG) && frtCode == AutoMakeCode.Enum.FrtCode.Hazure) Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
+                        else Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.None;
 
                         FreezeFunc();                    // フリーズ条件に合っている場合はリール始動を遅らせる
                     }
@@ -945,6 +1008,7 @@ public class Mn : MonoBehaviour
                             bnsCode = AutoMakeCode.Enum.BnsCode.Hazure;
                             bonusSeg.setNum(bnsMedal + 1, "D3" ,false);
                             debugType = DebugType.Normal;
+                            if (mnMode == MnMode.Tricks) ddmLot.BnsStart();
                             break;
                         case "ABIG_A":
                         case "ABIG_B":
@@ -962,6 +1026,7 @@ public class Mn : MonoBehaviour
                                 bnsCode = AutoMakeCode.Enum.BnsCode.Hazure;
                                 bonusSeg.setNum(bnsMedal + 1, "D3", false);
                                 debugType = DebugType.Normal;
+                                if (mnMode == MnMode.Tricks) ddmLot.BnsStart();
                             }
                             break;
                         case "REG_1":
@@ -975,6 +1040,7 @@ public class Mn : MonoBehaviour
                             bnsCode = AutoMakeCode.Enum.BnsCode.Hazure;
                             bonusSeg.setNum(bnsMedal + 1, "D3" ,false);
                             debugType = DebugType.Normal;
+                            if (mnMode == MnMode.Tricks) ddmLot.BnsStart();
                             break;
                         case "チェリー_1":
                         case "チェリー_2":
@@ -1081,6 +1147,7 @@ public class Mn : MonoBehaviour
             case GameState.BnsEndWait:
                 if(_bonusStartCount == 0)
                 {
+                    if (mnMode == MnMode.Tricks) ddmLot.BnsEnd();
                     gameState = GameState.BetWait;
                 }
                 break;
@@ -1412,44 +1479,42 @@ public class Mn : MonoBehaviour
 
     private void AutoPlayFunc()
     {
-        //switch (autoPlayType)
-        //{
-        //    case AutoPlayType.None:
-        //        if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.Infinity;
-        //        break;
-        //    case AutoPlayType.Infinity:
-        //        if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
-        //        break;
-        //    case AutoPlayType.BnsHit:
-        //        if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
-        //        if (Sim.DdmVariable.StartDdmMode == Sim.DDMMODE.BnsWait) autoPlayType = AutoPlayType.None;
-        //        break;
-        //    case AutoPlayType.RareHit:
-        //        if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
-        //        if (gameState == GameState.StopWait)
-        //        {
-        //            switch (Sim.DdmVariable.FrtCode)
-        //            {
-        //                case Sim.FRT_CODE.Chance:
-        //                case Sim.FRT_CODE.KyoChe:
-        //                case Sim.FRT_CODE.JakuChe:
-        //                case Sim.FRT_CODE.Suika:
-        //                    autoPlayType = AutoPlayType.None;
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //        }
-        //        break;
-        //    default:
-        //        break;
-        //}
+        switch (autoPlayType)
+        {
+            case AutoPlayType.None:
+                if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.Infinity;
+                break;
+            case AutoPlayType.Infinity:
+                if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
+                break;
+            case AutoPlayType.BnsHit:
+                if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
+                if (mnStatus != AutoMakeCode.Enum.Status.Nml) autoPlayType = AutoPlayType.None;
+                break;
+            case AutoPlayType.RareHit:
+                if (Input.GetKeyDown(KeyCode.Escape)) autoPlayType = AutoPlayType.None;
+                if (gameState == GameState.StopWait)
+                {
+                    switch (frtCode)
+                    {
+                        case AutoMakeCode.Enum.FrtCode.Suika:
+                        case AutoMakeCode.Enum.FrtCode.Cherry:
+                            autoPlayType = AutoPlayType.None;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                break;
+            default:
+                break;
+        }
 
-        //if(Input.GetKey(KeyCode.A) == true)
-        //{
-        //    if (Input.GetKeyDown(KeyCode.R) == true) autoPlayType = AutoPlayType.RareHit;
-        //    if (Input.GetKeyDown(KeyCode.B) == true) autoPlayType = AutoPlayType.BnsHit;
-        //}
+        if (Input.GetKey(KeyCode.A) == true)
+        {
+            if (Input.GetKeyDown(KeyCode.R) == true) autoPlayType = AutoPlayType.RareHit;
+            if (Input.GetKeyDown(KeyCode.B) == true) autoPlayType = AutoPlayType.BnsHit;
+        }
     }
 
     List<ReelController.Reel_ID> stopList = new List<ReelController.Reel_ID>();
