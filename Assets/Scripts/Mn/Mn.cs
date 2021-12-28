@@ -443,6 +443,9 @@ public class Mn : MonoBehaviour
     // 裏モノ抽せんクラス
     public ATypeSIM.Models.DdmLot ddmLot;
 
+    // reelspeed
+    public float reelspeed = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -450,6 +453,7 @@ public class Mn : MonoBehaviour
         leftReel = leftReelObject.GetComponent<ReelController>();
         centerReel = centerReelObject.GetComponent<ReelController>();
         rightReel = rightReelObject.GetComponent<ReelController>();
+        reelspeed = leftReel.reelSpeed;
         subMain = new SubMain();
 
         settei = (AutoMakeCode.Enum.Settei)rand.Next(6);
@@ -1001,6 +1005,7 @@ public class Mn : MonoBehaviour
                             Sim.DdmVariable.BnsGet = 0;
                             Sim.DdmVariable.SBIG++;
                             _bonusStartCount = bonusStartCount;
+                            if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze) _bonusStartCount = 0;
                             nmlPlayGame = 0;
                             subMain.BonusStart(bnsCode);
                             mnStatus = AutoMakeCode.Enum.Status.SBIG;
@@ -1019,6 +1024,7 @@ public class Mn : MonoBehaviour
                                 Sim.DdmVariable.BnsGet = 0;
                                 Sim.DdmVariable.ABIG++;
                                 _bonusStartCount = bonusStartCount;
+                                if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze) _bonusStartCount = 0;
                                 nmlPlayGame = 0;
                                 subMain.BonusStart(bnsCode);
                                 mnStatus = AutoMakeCode.Enum.Status.ABIG;
@@ -1226,7 +1232,23 @@ public class Mn : MonoBehaviour
                     Debug.Log("設定変更:1");
                 }
             }
+        }
 
+        // スローモーション
+        if (Sim.DdmVariable.FreezeType != Sim.FREEZE_TYPE.LongFreeze)
+        {
+            if ((Input.GetKey(KeyCode.S) == true) && (Input.GetKey(KeyCode.M) == true))
+            {
+                leftReel.reelSpeed = 3;
+                centerReel.reelSpeed = 3;
+                rightReel.reelSpeed = 3;
+            }
+            else
+            {
+                leftReel.reelSpeed = reelspeed;
+                centerReel.reelSpeed = reelspeed;
+                rightReel.reelSpeed = reelspeed;
+            }
         }
 
         if (gameState == GameState.GameWait)
@@ -1499,6 +1521,9 @@ public class Mn : MonoBehaviour
                     {
                         case AutoMakeCode.Enum.FrtCode.Suika:
                         case AutoMakeCode.Enum.FrtCode.Cherry:
+                        case AutoMakeCode.Enum.FrtCode.ItimaiA:
+                        case AutoMakeCode.Enum.FrtCode.ItimaiB:
+                        case AutoMakeCode.Enum.FrtCode.ItimaiC:
                             autoPlayType = AutoPlayType.None;
                             break;
                         default:

@@ -290,21 +290,9 @@ public class ReelController : MonoBehaviour
     {
         eventList.Add(new ReelController.EventData()
         {
-            speed = 0,
-            time = 180,
-            rotation = ReelController.RotationDirection.Regular,
-        });
-        eventList.Add(new ReelController.EventData()
-        {
             speed = 5,
-            time = 180,
+            time = 300,
             rotation = ReelController.RotationDirection.Inverse,
-        });
-        eventList.Add(new ReelController.EventData()
-        {
-            speed = 0,
-            time = 180,
-            rotation = ReelController.RotationDirection.Regular,
         });
         eventList.Add(new ReelController.EventData()
         {

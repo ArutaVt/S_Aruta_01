@@ -103,6 +103,11 @@ class SubMain
 
         // Leverで白点灯に戻す
         subSub.LogoColor(Color.white);
+
+        if(Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze)
+        {
+            bonusSound.PlayBgm(BonusSound.BonusSoundType.BB4_StartFrtJacGame);
+        }
     }
 
     public void WaitStart()
@@ -120,6 +125,24 @@ class SubMain
     public void ReelStart()
     {
         Sound.StopSe(0);
+
+        if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze)
+        {
+            // 告知ランプ点灯
+            switch (Mn.mnStatus)
+            {
+                case AutoMakeCode.Enum.Status.ABIGStandby:
+                    subSub.BonusLampOn(SubSub.BonusLamp.A);
+                    break;
+                case AutoMakeCode.Enum.Status.SBIGStandby:
+                    subSub.BonusLampOn(SubSub.BonusLamp.Seven);
+                    break;
+                case AutoMakeCode.Enum.Status.RBStandby:
+                    subSub.BonusLampOn(SubSub.BonusLamp.Bar);
+                    break;
+            }
+            return;
+        }
 
         // 予告音抽せん        
         switch (smLot.lotA1())
@@ -196,43 +219,6 @@ class SubMain
         {
             // 停止音演出抽せん
             smLot.lotA5();
-        }
-
-        switch (Sim.DdmVariable.StartDdmMode)
-        {
-            case Sim.DDMMODE.Nml:
-                if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze)
-                {
-                    // subSub.cutIn.DispCutIn(CutIn.Type.White);
-                }
-                break;
-            case Sim.DDMMODE.BnsWait:
-                break;
-            case Sim.DDMMODE.Bns:
-                break;
-            case Sim.DDMMODE.Rush:
-                if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.RushStart)
-                {
-                    DispText(true);
-                    if(Sim.DdmVariable.FreezeFlg == true)
-                    {
-                        Sound.PlayBgm("UltimateBattle");
-                    }
-                    else if((Sim.DdmVariable.AtMode == Sim.RUSH_MODE._80) && (rand.Next(2) == 0))
-                    {
-                        Sound.PlayBgm("Magia");
-                    }
-                    else
-                    {
-                        Sound.PlayBgm("WalpurgisNight");
-                    }
-                    DispNaviFunction();
-                }
-                break;
-            case Sim.DDMMODE.AtBns:
-                break;
-            default:
-                break;
         }
     }
 
@@ -346,6 +332,13 @@ class SubMain
             {
                 case "7BIG":
                     bonusGameCnt = 0;
+
+                    if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze)
+                    {
+                        bonustype = BonusType.BB4;
+                        return;
+                    }
+
                     if (bonusSoundChangeFlg == true)
                     {
                         if(bonusMarginGame == 0)
@@ -368,6 +361,13 @@ class SubMain
                 case "ABIG":
                     ACount++;
                     bonusGameCnt = 0;
+
+                    if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze)
+                    {
+                        bonustype = BonusType.BB4;
+                        return;
+                    }
+
                     if (bonusSoundChangeFlg == true)
                     {
                         if (bonusMarginGame == 0)
