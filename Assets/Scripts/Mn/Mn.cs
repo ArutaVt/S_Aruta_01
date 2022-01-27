@@ -446,6 +446,10 @@ public class Mn : MonoBehaviour
     // reelspeed
     public float reelspeed = 0;
 
+    // テストモードフラグ
+    public bool testmode = true;
+    public int[] testpushcoma = { 0, 0, 0 };
+
     // Start is called before the first frame update
     void Start()
     {
@@ -660,14 +664,17 @@ public class Mn : MonoBehaviour
                             if (Input.GetKey(KeyCode.Alpha1)) bnsCode = AutoMakeCode.Enum.BnsCode.RB;
                             if (Input.GetKey(KeyCode.Alpha2)) bnsCode = AutoMakeCode.Enum.BnsCode.SBIG;
                             if (Input.GetKey(KeyCode.Alpha3)) bnsCode = AutoMakeCode.Enum.BnsCode.ABIG;
+                            if (Input.GetKey(KeyCode.Alpha0)) bnsCode = AutoMakeCode.Enum.BnsCode.Hazure;
 
-                            // 一枚役
-                            if(bnsCode != AutoMakeCode.Enum.BnsCode.Hazure)
-                            {
-                                if (Input.GetKey(KeyCode.A)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiA;
-                                if (Input.GetKey(KeyCode.B)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiB;
-                                if (Input.GetKey(KeyCode.C)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiC;
-                            }
+                            // 小役
+                            if (Input.GetKey(KeyCode.A)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiA;
+                            if (Input.GetKey(KeyCode.B)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiB;
+                            if (Input.GetKey(KeyCode.C)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiC;
+                            if (Input.GetKey(KeyCode.D)) frtCode = AutoMakeCode.Enum.FrtCode.Suika;
+                            if (Input.GetKey(KeyCode.E)) frtCode = AutoMakeCode.Enum.FrtCode.Cherry;
+                            if (Input.GetKey(KeyCode.F)) frtCode = AutoMakeCode.Enum.FrtCode.Bell;
+                            if (Input.GetKey(KeyCode.G)) frtCode = AutoMakeCode.Enum.FrtCode.Replay;
+                            if (Input.GetKey(KeyCode.H)) frtCode = AutoMakeCode.Enum.FrtCode.Hazure;
 
                             break;
                         case DebugType.DebugLot:
@@ -774,6 +781,9 @@ public class Mn : MonoBehaviour
                                 leftReel.ReelStart();
                                 centerReel.ReelStart();
                                 rightReel.ReelStart();
+                                testpushcoma[0] = -1;
+                                testpushcoma[1] = -1;
+                                testpushcoma[2] = -1;
                                 gameState = GameState.ReelStartWait;
                             }
                         }
@@ -800,8 +810,12 @@ public class Mn : MonoBehaviour
 
             case GameState.StopWait:
 
+                if (Input.GetKeyDown(KeyCode.LeftArrow)) testpushcoma[0] = getPushComa(ReelController.Reel_ID.Left);
+                if (Input.GetKeyDown(KeyCode.DownArrow)) testpushcoma[1] = getPushComa(ReelController.Reel_ID.Center);
+                if (Input.GetKeyDown(KeyCode.RightArrow)) testpushcoma[2] = getPushComa(ReelController.Reel_ID.Right);
+
                 // リールが停止受付中のときに左を入力
-                if ((Input.GetKeyDown(KeyCode.LeftArrow) == true || IsAutoPlayStop(ReelController.Reel_ID.Left)) && (leftReel.reelState == ReelController.ReelState.StopWait))
+                if ((testpushcoma[0] == leftReel.getComa()) && (leftReel.reelState == ReelController.ReelState.StopWait))
                 {
                     // 左入力
                     Debug.Log("LeftStop");
@@ -839,7 +853,7 @@ public class Mn : MonoBehaviour
                 }
 
                 // リールが停止受付中のときに下を入力
-                if ((Input.GetKeyDown(KeyCode.DownArrow) == true || IsAutoPlayStop(ReelController.Reel_ID.Center)) && (centerReel.reelState == ReelController.ReelState.StopWait))
+                if ((testpushcoma[1] == centerReel.getComa()) && (centerReel.reelState == ReelController.ReelState.StopWait))
                 {
                     // 下入力
                     Debug.Log("CenterStop");
@@ -876,7 +890,7 @@ public class Mn : MonoBehaviour
                 }
 
                 // リールが停止受付中のときに右を入力
-                if ((Input.GetKeyDown(KeyCode.RightArrow) == true || IsAutoPlayStop(ReelController.Reel_ID.Right)) && (rightReel.reelState == ReelController.ReelState.StopWait))
+                if ((testpushcoma[2] == rightReel.getComa()) && (rightReel.reelState == ReelController.ReelState.StopWait))
                 {
                     // 右入力
                     Debug.Log("RightStop");
@@ -1267,6 +1281,41 @@ public class Mn : MonoBehaviour
                 }
             }
         }
+    }
+
+    private int getPushComa(ReelController.Reel_ID reel_ID)
+    {
+        int pushComa = 0;
+
+        if (Input.GetKey(KeyCode.LeftShift) == true) pushComa += 10;
+        if (Input.GetKey(KeyCode.LeftControl) == true) pushComa += 10;
+
+        if (Input.GetKey(KeyCode.Alpha1) == true) pushComa += 1;
+        else if (Input.GetKey(KeyCode.Alpha2) == true) pushComa += 2;
+        else if (Input.GetKey(KeyCode.Alpha3) == true) pushComa += 3;
+        else if (Input.GetKey(KeyCode.Alpha4) == true) pushComa += 4;
+        else if (Input.GetKey(KeyCode.Alpha5) == true) pushComa += 5;
+        else if (Input.GetKey(KeyCode.Alpha6) == true) pushComa += 6;
+        else if (Input.GetKey(KeyCode.Alpha7) == true) pushComa += 7;
+        else if (Input.GetKey(KeyCode.Alpha8) == true) pushComa += 8;
+        else if (Input.GetKey(KeyCode.Alpha9) == true) pushComa += 9;
+        else if (Input.GetKey(KeyCode.Alpha0) == true) pushComa += 0;
+        else if(pushComa == 0)
+        {
+            switch (reel_ID)
+            {
+                case ReelController.Reel_ID.Left:
+                    return leftReel.getComa();
+                case ReelController.Reel_ID.Center:
+                    return centerReel.getComa();
+                case ReelController.Reel_ID.Right:
+                    return rightReel.getComa();
+                default:
+                    break;
+            }
+        }
+
+        return 21 - pushComa;
     }
 
     private void StopSeqChange(ReelController.Reel_ID reel)
