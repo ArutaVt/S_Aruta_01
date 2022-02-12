@@ -305,7 +305,7 @@ public class Mn : MonoBehaviour
         new CmbRecode()
         {
             name = "1枚役A",
-            zugara = new int[]{ 0,1,7 },
+            zugara = new int[]{ 0,2,7 },
             bnsMedal = 0,
             pay = new int[]{ 1, 1 },
             replay = false,
@@ -314,7 +314,7 @@ public class Mn : MonoBehaviour
         new CmbRecode()
         {
             name = "1枚役B",
-            zugara = new int[]{ 3,7,0 },
+            zugara = new int[]{ 3,3,7 },
             bnsMedal = 0,
             pay = new int[]{ 1, 1 },
             replay = false,
@@ -656,18 +656,18 @@ public class Mn : MonoBehaviour
                             _frtCode = frtCode;
                             _bnsCode = bnsCode;
 
-                            // 強制フラグ
-                            if (Input.GetKey(KeyCode.Alpha1)) bnsCode = AutoMakeCode.Enum.BnsCode.RB;
-                            if (Input.GetKey(KeyCode.Alpha2)) bnsCode = AutoMakeCode.Enum.BnsCode.SBIG;
-                            if (Input.GetKey(KeyCode.Alpha3)) bnsCode = AutoMakeCode.Enum.BnsCode.ABIG;
+                            //// 強制フラグ
+                            //if (Input.GetKey(KeyCode.Alpha1)) bnsCode = AutoMakeCode.Enum.BnsCode.RB;
+                            //if (Input.GetKey(KeyCode.Alpha2)) bnsCode = AutoMakeCode.Enum.BnsCode.SBIG;
+                            //if (Input.GetKey(KeyCode.Alpha3)) bnsCode = AutoMakeCode.Enum.BnsCode.ABIG;
 
-                            // 一枚役
-                            if(bnsCode != AutoMakeCode.Enum.BnsCode.Hazure)
-                            {
-                                if (Input.GetKey(KeyCode.A)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiA;
-                                if (Input.GetKey(KeyCode.B)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiB;
-                                if (Input.GetKey(KeyCode.C)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiC;
-                            }
+                            //// 一枚役
+                            //if(bnsCode != AutoMakeCode.Enum.BnsCode.Hazure)
+                            //{
+                            //    if (Input.GetKey(KeyCode.A)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiA;
+                            //    if (Input.GetKey(KeyCode.B)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiB;
+                            //    if (Input.GetKey(KeyCode.C)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiC;
+                            //}
 
                             break;
                         case DebugType.DebugLot:
