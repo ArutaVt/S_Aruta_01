@@ -307,7 +307,7 @@ public class Mn : MonoBehaviour
             name = "1枚役A",
             zugara = new int[]{ 0,2,7 },
             bnsMedal = 0,
-            pay = new int[]{ 1, 1 },
+            pay = new int[]{ 15, 1 },
             replay = false,
         },
 
@@ -316,7 +316,7 @@ public class Mn : MonoBehaviour
             name = "1枚役B",
             zugara = new int[]{ 3,3,7 },
             bnsMedal = 0,
-            pay = new int[]{ 1, 1 },
+            pay = new int[]{ 15, 1 },
             replay = false,
         },
 
@@ -325,7 +325,7 @@ public class Mn : MonoBehaviour
             name = "1枚役C",
             zugara = new int[]{ 7,9,9 },
             bnsMedal = 0,
-            pay = new int[]{ 1, 1 },
+            pay = new int[]{ 15, 1 },
             replay = false,
         },
     };
@@ -688,19 +688,23 @@ public class Mn : MonoBehaviour
                     // 抽せん結果デバッグ表示
                     Debug.Log(bnsCode + ":" + frtCode);
 
-                    switch (bnsCode)
+                    // 非内部中のみ更新
+                    if(mnStatus == AutoMakeCode.Enum.Status.Nml)
                     {
-                        case AutoMakeCode.Enum.BnsCode.ABIG:
-                            mnStatus = AutoMakeCode.Enum.Status.ABIGStandby;
-                            break;
-                        case AutoMakeCode.Enum.BnsCode.SBIG:
-                            mnStatus = AutoMakeCode.Enum.Status.SBIGStandby;
-                            break;
-                        case AutoMakeCode.Enum.BnsCode.RB:
-                            mnStatus = AutoMakeCode.Enum.Status.RBStandby;
-                            break;
-                        default:
-                            break;
+                        switch (bnsCode)
+                        {
+                            case AutoMakeCode.Enum.BnsCode.ABIG:
+                                mnStatus = AutoMakeCode.Enum.Status.ABIGStandby;
+                                break;
+                            case AutoMakeCode.Enum.BnsCode.SBIG:
+                                mnStatus = AutoMakeCode.Enum.Status.SBIGStandby;
+                                break;
+                            case AutoMakeCode.Enum.BnsCode.RB:
+                                mnStatus = AutoMakeCode.Enum.Status.RBStandby;
+                                break;
+                            default:
+                                break;
+                        }
                     }
 
                     // 今回の制御データ
@@ -935,6 +939,16 @@ public class Mn : MonoBehaviour
 
                 // PayOut処理
                 Debug.Log("PayOut");
+
+                // ボーナス中の特賞成立は一旦削除
+                switch (mnStatus)
+                {
+                    case AutoMakeCode.Enum.Status.ABIG:
+                    case AutoMakeCode.Enum.Status.SBIG:
+                    case AutoMakeCode.Enum.Status.RB:
+                        bnsCode = AutoMakeCode.Enum.BnsCode.Hazure;
+                        break;
+                }
 
                 // システムランプ初期化
                 replayLamp.lampOff();

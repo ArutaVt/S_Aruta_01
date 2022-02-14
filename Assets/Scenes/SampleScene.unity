@@ -2880,6 +2880,7 @@ MonoBehaviour:
   - {fileID: 256609509}
   - {fileID: 1368215673}
   trickMode: 1
+  reelspeed: 0
 --- !u!114 &1435184003
 MonoBehaviour:
   m_ObjectHideFlags: 0
