@@ -116,6 +116,7 @@ public class SMLot
         else table_Y_Index = 0;
         A4_Result result = (A4_Result)lot(4, table_X_Index, table_Y_Index, box_X_Index);
         Debug.Log(_lotname + ":" + result);
+        a4_Result = result;
         return result;
     }
 

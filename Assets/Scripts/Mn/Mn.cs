@@ -737,6 +737,11 @@ public class Mn : MonoBehaviour
                             longFreezseNaibuFlg = true;
                             Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
                         }
+                        else if(nmlPlayGame > 255 && ((bnsCode == AutoMakeCode.Enum.BnsCode.SBIG) && (frtCode == AutoMakeCode.Enum.FrtCode.Hazure)))
+                        {
+                            longFreezseNaibuFlg = true;
+                            Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
+                        }
                         else
                         {
                             Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.None;

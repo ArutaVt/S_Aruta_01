@@ -217,6 +217,13 @@ class SubMain
             return;
         }
 
+        // ウェイト時にウーハーに当せんしていた場合は通常回胴回転音のみ
+        if (smLot.a4_Result == SMLot.A4_Result.Hit)
+        {
+            Sound.PlaySe("REELSTART", 0.2f);
+            return;
+        }
+
         // 予告音抽せん        
         switch (smLot.lotA1())
         {
