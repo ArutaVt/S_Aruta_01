@@ -19,6 +19,7 @@ public class SMLot
     public enum A2_Result{ None, A, B, C }
     public enum A3_Result{ None, A, B, C }
     public enum A4_Result{ None, Hit }
+    public A4_Result a4_Result;
     public enum A5_Result{ None, S1, S12, S123, S123_On, S123_Off }
     public A5_Result a5_Result;
     public enum A6_Result

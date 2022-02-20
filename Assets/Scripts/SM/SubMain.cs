@@ -36,7 +36,6 @@ class SubMain
     private Ranking ranking;
     public static bool dispSetteiFlg = false;
 
-    public BonusType bonustype = BonusType.BB1;
     public enum BonusType
     { 
         BB1,
@@ -46,6 +45,19 @@ class SubMain
         RB1,
         RB2
     };
+    public BonusType bonustype = BonusType.BB1;
+
+    // 成立時の状態保存用
+    public enum HitType
+    {
+        None,
+        Cherry,
+        Suika,
+        Replay,
+        Bell,
+        Hazure,
+    }
+    public HitType hitType = HitType.None;
 
     // 演出抽せんクラス
     SMLot smLot = new SMLot();
@@ -104,21 +116,72 @@ class SubMain
         // Leverで白点灯に戻す
         subSub.LogoColor(Color.white);
 
+        // ロンフリ制御
         if(Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze)
         {
+            subSub.LogoColor(Color.gray);
             bonusSound.PlayBgm(BonusSound.BonusSoundType.BB4_StartFrtJacGame);
         }
+        
+        // 成立時の小役を記録
+        if(Mn.hitBnsGameFlg == true)
+        {
+            switch (Mn.frtCode)
+            {
+                case AutoMakeCode.Enum.FrtCode.Suika:
+                    hitType = HitType.Suika;
+                    break;
+                case AutoMakeCode.Enum.FrtCode.Cherry:
+                    hitType = HitType.Cherry;
+                    break;
+                case AutoMakeCode.Enum.FrtCode.Bell:
+                    hitType = HitType.Bell;
+                    break;
+                case AutoMakeCode.Enum.FrtCode.ItimaiA:
+                case AutoMakeCode.Enum.FrtCode.ItimaiB:
+                case AutoMakeCode.Enum.FrtCode.ItimaiC:
+                case AutoMakeCode.Enum.FrtCode.Hazure:
+                    hitType = HitType.Hazure;
+                    break;
+                case AutoMakeCode.Enum.FrtCode.Replay:
+                    hitType = HitType.Replay;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // レバーでLot4の結果初期化
+        smLot.a4_Result = SMLot.A4_Result.None;
     }
 
     public void WaitStart()
     {
-        if (smLot.lotA4() == SMLot.A4_Result.Hit)
+
+        if(Mn.longFreezseNaibuFlg == false)
         {
-            Sound.PlaySe("ウーハー", 0.4f, 0);
+            if(Mn.hitBnsGameFlg == true)
+            {
+                if((Mn.bnsCode == AutoMakeCode.Enum.BnsCode.ABIG) || (Mn.bnsCode == AutoMakeCode.Enum.BnsCode.SBIG))
+                {
+                    if(Mn.frtCode == AutoMakeCode.Enum.FrtCode.Hazure)
+                    {
+                        smLot.lotA4();      // ウーハー抽せん
+                    }
+                }
+            }
         }
-        else
+
+        switch (smLot.a4_Result)
         {
-            Sound.PlaySe("WAIT", 0.1f, 0);
+            case SMLot.A4_Result.None:
+                Sound.PlaySe("WAIT", 0.1f, 0);
+                break;
+            case SMLot.A4_Result.Hit:
+                Sound.PlaySe("ウーハー", 0.4f, 0);
+                break;
+            default:
+                break;
         }
     }
 
@@ -126,8 +189,12 @@ class SubMain
     {
         Sound.StopSe(0);
 
+        // ロンフリ制御
         if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze)
         {
+            // ロゴ再点灯
+            subSub.LogoColor(Color.white);
+
             // 告知ランプ点灯
             switch (Mn.mnStatus)
             {
@@ -143,11 +210,18 @@ class SubMain
             }
             return;
         }
+        else if(Mn.longFreezseNaibuFlg == true)
+        {
+            // ロンフリ発生後の入賞まではレバーで演出を抽せんしない
+            Sound.PlaySe("REELSTART", 0.2f);
+            return;
+        }
 
         // 予告音抽せん        
         switch (smLot.lotA1())
         {
             case SMLot.A1_Result.None:
+                subSub.LogoColor(Color.gray);
                 break;
             case SMLot.A1_Result.Normal:
 
@@ -242,6 +316,9 @@ class SubMain
                     subSub.BonusLampOn(SubSub.BonusLamp.Bar);
                     break;
             }
+
+            // S3Offで入賞と同時に告知ランプがONならないように0へ
+            naibuCnt = 0;
         }
     }
 
@@ -277,7 +354,28 @@ class SubMain
                 case "チェリー_1":
                 case "チェリー_2":
                 case "チェリー代替":
-                    if (paysound.Exists(x => x == "CHERRY") == false) paysound.Add("CHERRY");
+
+                    switch (state)
+                    {
+                        case AutoMakeCode.Enum.Status.ABIG:
+                        case AutoMakeCode.Enum.Status.SBIG:
+                            if (jacGameFlg == true)
+                            {
+                                if (paysound.Exists(x => x == "JACBELL") == false) paysound.Add("JACBELL");
+                            }
+                            else
+                            {
+                                if (paysound.Exists(x => x == "BELL") == false) paysound.Add("BELL");
+                            }
+                            break;
+                        case AutoMakeCode.Enum.Status.RB:
+                            if (paysound.Exists(x => x == "JACBELL") == false) paysound.Add("JACBELL");
+                            break;
+                        default:
+                            if (paysound.Exists(x => x == "CHERRY") == false) paysound.Add("CHERRY");
+                            break;
+                    }
+
                     break;
                 case "スイカ":
                     if (paysound.Exists(x => x == "SUIKA") == false) paysound.Add("SUIKA");
@@ -319,6 +417,16 @@ class SubMain
                 case "1枚役A":
                 case "1枚役B":
                 case "1枚役C":
+
+                    switch (state)
+                    {
+                        case AutoMakeCode.Enum.Status.ABIG:
+                        case AutoMakeCode.Enum.Status.SBIG:
+                        case AutoMakeCode.Enum.Status.RB:
+                            if (paysound.Exists(x => x == "SUIKA") == false) paysound.Add("SUIKA");
+                            break;
+                    }
+
                     break;
                 default:
                     break;
@@ -333,8 +441,10 @@ class SubMain
                 case "7BIG":
                     bonusGameCnt = 0;
 
-                    if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze)
-                    {
+                    if (Mn.longFreezseNaibuFlg == true)
+                    {   
+                        // ロンフリ入賞で単独当選に切り替え
+                        hitType = HitType.Hazure;
                         bonustype = BonusType.BB4;
                         return;
                     }
@@ -362,8 +472,10 @@ class SubMain
                     ACount++;
                     bonusGameCnt = 0;
 
-                    if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze)
+                    if (Mn.longFreezseNaibuFlg == true)
                     {
+                        // ロンフリ入賞で単独当選に切り替え
+                        hitType = HitType.Hazure;
                         bonustype = BonusType.BB4;
                         return;
                     }
@@ -719,11 +831,13 @@ class SubMain
 
         // 内部中のハズレカウント用
         naibuCnt = 0;
+
+        // 成立時の状態を初期化
+        hitType = HitType.None;
     }
     
     public void GameEnd()
     {
-
         if (bnsEndflg == true)
         {
             bnsEndflg = false;
@@ -754,8 +868,8 @@ class SubMain
             subSub.BonusLampAllOff();
         }
 
-        // (5G)経過した時にBGM変更フラグがONの場合はOFFにする
-        if((bonusSoundChangeFlg == true) && (bonusMarginGame > 5))
+        // (32G)経過した時にBGM変更フラグがONの場合はOFFにする
+        if((bonusSoundChangeFlg == true) && (bonusMarginGame > 32))
         {
             bonusSoundChangeFlg = false;
         }
@@ -765,7 +879,7 @@ class SubMain
         {
             naibuCnt++;
 
-            if(naibuCnt == 3)
+            if((naibuCnt == 3) && (Mn.longFreezseNaibuFlg == false))
             {
                 Sound.PlaySe("BONUS_LAMP", 0.2f);
 
@@ -793,7 +907,6 @@ class SubMain
                 case Mn.MnMode.Normal:
                     if(Sim.DdmVariable.TotalNmlGames == 1000)
                     {
-                        dispSetteiFlg = true;
                         long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
                         scoreboard.SendScore(1, score, true);
                     }
@@ -926,6 +1039,43 @@ class SubMain
         // {
         //     GetMedal.GetComponent<Text>().text = "Total " + data.getmedal;
         // }
+
+        // ボーナス中（作動後～）スペース押下で重複役開示
+        switch (Mn.mnStatus)
+        {
+            case AutoMakeCode.Enum.Status.ABIG:
+            case AutoMakeCode.Enum.Status.SBIG:
+            case AutoMakeCode.Enum.Status.RB:
+                if(Input.GetKeyDown(KeyCode.Space) && (hitType != HitType.None))
+                {
+                    switch (hitType)
+                    {
+                        case HitType.None:
+                            break;
+                        case HitType.Cherry:
+                            subSub.LogoFlash(Color.red);
+                            break;
+                        case HitType.Suika:
+                            subSub.LogoFlash(Color.green);
+                            break;
+                        case HitType.Replay:
+                            subSub.LogoFlash(Color.blue);
+                            break;
+                        case HitType.Bell:
+                            subSub.LogoFlash(Color.yellow);
+                            break;
+                        case HitType.Hazure:
+                            subSub.LogoFlash(Color.white);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    // 一回押下のみ有効
+                    hitType = HitType.None;
+                }
+            break;
+        }
 
         if (Input.GetKey(KeyCode.D))
         {

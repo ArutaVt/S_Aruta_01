@@ -387,6 +387,9 @@ public class Mn : MonoBehaviour
     public static AutoMakeCode.Enum.FrtCode frtCode;
     public AutoMakeCode.Enum.FrtCode _frtCode;  // デバッグ用
 
+    // ロンフリ内部中フラグ
+    static public bool longFreezseNaibuFlg = false;
+
     // 抽せん結果
     public BnsFrtLot.Recode lotResult;
 
@@ -729,8 +732,15 @@ public class Mn : MonoBehaviour
                         if (Sim.DdmVariable.startMnSts == AutoMakeCode.Enum.Status.Nml) nmlPlayGame++;
 
                         // 1G目に単独ABIGでロングフリーズ
-                        if (nmlPlayGame == 1 && hitBnsGameFlg == true && (bnsCode == AutoMakeCode.Enum.BnsCode.ABIG || bnsCode == AutoMakeCode.Enum.BnsCode.SBIG) && frtCode == AutoMakeCode.Enum.FrtCode.Hazure) Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
-                        else Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.None;
+                        if (nmlPlayGame == 1 && hitBnsGameFlg == true && (bnsCode == AutoMakeCode.Enum.BnsCode.ABIG || bnsCode == AutoMakeCode.Enum.BnsCode.SBIG) && frtCode == AutoMakeCode.Enum.FrtCode.Hazure)
+                        {
+                            longFreezseNaibuFlg = true;
+                            Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
+                        }
+                        else
+                        {
+                            Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.None;
+                        }
 
                         FreezeFunc();                    // フリーズ条件に合っている場合はリール始動を遅らせる
                     }
@@ -1018,10 +1028,10 @@ public class Mn : MonoBehaviour
                         case "7BIG":
                             Sim.DdmVariable.BnsGet = 0;
                             Sim.DdmVariable.SBIG++;
-                            _bonusStartCount = bonusStartCount;
-                            if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze) _bonusStartCount = 0;
-                            nmlPlayGame = 0;
                             subMain.BonusStart(bnsCode);
+                            _bonusStartCount = bonusStartCount;
+                            if (longFreezseNaibuFlg == true) _bonusStartCount = 0;
+                            nmlPlayGame = 0;
                             mnStatus = AutoMakeCode.Enum.Status.SBIG;
                             bnsMedal = item.bnsMedal;
                             bnsCode = AutoMakeCode.Enum.BnsCode.Hazure;
@@ -1037,10 +1047,10 @@ public class Mn : MonoBehaviour
                             {
                                 Sim.DdmVariable.BnsGet = 0;
                                 Sim.DdmVariable.ABIG++;
-                                _bonusStartCount = bonusStartCount;
-                                if (Sim.DdmVariable.FreezeType == Sim.FREEZE_TYPE.LongFreeze) _bonusStartCount = 0;
-                                nmlPlayGame = 0;
                                 subMain.BonusStart(bnsCode);
+                                _bonusStartCount = bonusStartCount; 
+                                if (longFreezseNaibuFlg == true) _bonusStartCount = 0;
+                                nmlPlayGame = 0;
                                 mnStatus = AutoMakeCode.Enum.Status.ABIG;
                                 bnsMedal = item.bnsMedal;
                                 bnsCode = AutoMakeCode.Enum.BnsCode.Hazure;
@@ -1093,6 +1103,9 @@ public class Mn : MonoBehaviour
                 }
 
                 subMain.PayOut(stopCmb, (int)betType, mnStatus);
+
+                // ロンフリフラグOFF
+                if ((longFreezseNaibuFlg == true) && ((mnStatus == AutoMakeCode.Enum.Status.ABIG)||(mnStatus == AutoMakeCode.Enum.Status.SBIG))) longFreezseNaibuFlg = false;
 
                 // ボーナス中の払い出し枚数
                 switch (mnStatus)
