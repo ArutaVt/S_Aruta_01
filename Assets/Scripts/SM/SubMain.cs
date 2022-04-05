@@ -208,6 +208,10 @@ class SubMain
                     subSub.BonusLampOn(SubSub.BonusLamp.Bar);
                     break;
             }
+
+            // 当せん内容初期化
+            smLot.a5_Result = SMLot.A5_Result.None;
+
             return;
         }
         else if(Mn.longFreezseNaibuFlg == true)

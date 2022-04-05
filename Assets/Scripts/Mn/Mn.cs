@@ -394,7 +394,7 @@ public class Mn : MonoBehaviour
     public BnsFrtLot.Recode lotResult;
 
     // 通常消化G数
-    public static int nmlPlayGame = 0;
+    public static int nmlPlayGame = 255;
 
     // 当せん当該遊技フラグ
     public static bool hitBnsGameFlg;
@@ -737,7 +737,7 @@ public class Mn : MonoBehaviour
                             longFreezseNaibuFlg = true;
                             Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
                         }
-                        else if(nmlPlayGame > 255 && ((bnsCode == AutoMakeCode.Enum.BnsCode.SBIG) && (frtCode == AutoMakeCode.Enum.FrtCode.Hazure)))
+                        else if(nmlPlayGame > 255 && ((bnsCode == AutoMakeCode.Enum.BnsCode.SBIG) && (frtCode == AutoMakeCode.Enum.FrtCode.Hazure)) && hitBnsGameFlg == true)
                         {
                             longFreezseNaibuFlg = true;
                             Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
