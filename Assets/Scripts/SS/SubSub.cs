@@ -20,6 +20,9 @@ public class SubSub : MonoBehaviour
     public GameObject WinLampObject;
     private Logo winLamp;
 
+    // スコアボード
+    private AtsumaruScoreboard scoreboard = new AtsumaruScoreboard();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -52,6 +55,22 @@ public class SubSub : MonoBehaviour
         Sound.LoadSe("ウーハー", "25_ウーハー風単体");
         Sound.LoadSe("遅れ", "遅れ_レバオン");
         Sound.LoadSe("BONUS_SND", "nc156987");
+    }
+
+    private void Update()
+    {
+        if (SubMain.dispSetteiFlg == false)
+        {
+            if (Mn.mnMode == Mn.MnMode.Live)
+            {
+                if (Sim.DdmVariable.TotalNmlGames > 100 && (System.DateTime.Now.CompareTo(Ranking.endTime) ==  1))
+                {
+                    long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
+                    scoreboard.SendScore(4, score, false);
+                    SubMain.dispSetteiFlg = true;
+                }
+            }
+        }
     }
 
     /// <summary>

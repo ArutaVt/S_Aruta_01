@@ -120,6 +120,7 @@ public class Mn : MonoBehaviour
         Normal,         // 通常のMn
         Score,          // Scoreアタック用のMn
         Tricks,         // 裏モノモード
+        Live,           // リアルタイム集計
     }
 
     public enum TrickMode
@@ -633,6 +634,7 @@ public class Mn : MonoBehaviour
                             switch (mnMode)
                             {
                                 case MnMode.Normal:
+                                case MnMode.Live:
                                     // 通常抽せん
                                     lotResult = bnsFrtLot.Lot(settei, mnStatus, RT);
                                     if (bnsCode == AutoMakeCode.Enum.BnsCode.Hazure) bnsCode = lotResult.bnsCode;
@@ -659,13 +661,13 @@ public class Mn : MonoBehaviour
                             _frtCode = frtCode;
                             _bnsCode = bnsCode;
 
-                            //// 強制フラグ
+                            // 強制フラグ
                             //if (Input.GetKey(KeyCode.Alpha1)) bnsCode = AutoMakeCode.Enum.BnsCode.RB;
                             //if (Input.GetKey(KeyCode.Alpha2)) bnsCode = AutoMakeCode.Enum.BnsCode.SBIG;
                             //if (Input.GetKey(KeyCode.Alpha3)) bnsCode = AutoMakeCode.Enum.BnsCode.ABIG;
 
-                            //// 一枚役
-                            //if(bnsCode != AutoMakeCode.Enum.BnsCode.Hazure)
+                            // 一枚役
+                            //if (bnsCode != AutoMakeCode.Enum.BnsCode.Hazure)
                             //{
                             //    if (Input.GetKey(KeyCode.A)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiA;
                             //    if (Input.GetKey(KeyCode.B)) frtCode = AutoMakeCode.Enum.FrtCode.ItimaiB;

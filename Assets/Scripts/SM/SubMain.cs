@@ -1088,6 +1088,12 @@ class SubMain
             break;
         }
 
+        // LIVE同時押しで配信ランキングを表示
+        if (Input.GetKey(KeyCode.L) && Input.GetKey(KeyCode.I) && Input.GetKey(KeyCode.V) && Input.GetKey(KeyCode.E))
+        {
+            scoreboard.ShowScoreboard(4);
+        }
+
         if (Input.GetKey(KeyCode.D))
         {
             Text tmptext = scoreBoard.GetComponentInChildren<Text>();
