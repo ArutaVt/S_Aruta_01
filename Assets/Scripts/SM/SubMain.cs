@@ -1129,7 +1129,7 @@ class SubMain
                 {
                     tmptext.text += $"設定:スコアアタックモード\n";
                 }
-                else if(Mn.mnMode == Mn.MnMode.Normal)
+                else if(Mn.mnMode == Mn.MnMode.Normal || Mn.mnMode == Mn.MnMode.Live)
                 {
                     tmptext.text += $"設定:{(Int64)Mn.settei + 1}\n";
                 }
