@@ -733,11 +733,14 @@ public class Mn : MonoBehaviour
                         // 通常消化G数加算
                         if (Sim.DdmVariable.startMnSts == AutoMakeCode.Enum.Status.Nml) nmlPlayGame++;
 
-                        // 1G目に単独ABIGでロングフリーズ
-                        if (nmlPlayGame == 1 && hitBnsGameFlg == true && (bnsCode == AutoMakeCode.Enum.BnsCode.ABIG || bnsCode == AutoMakeCode.Enum.BnsCode.SBIG) && frtCode == AutoMakeCode.Enum.FrtCode.Hazure)
+                        // 1G目にABIG成立している場合、次のハズレでロンフリ
+                        if (nmlPlayGame == 1 && bnsCode == AutoMakeCode.Enum.BnsCode.ABIG && frtCode == AutoMakeCode.Enum.FrtCode.Hazure)
                         {
-                            longFreezseNaibuFlg = true;
-                            Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
+                            if(longFreezseNaibuFlg == false)
+                            {
+                                longFreezseNaibuFlg = true;
+                                Sim.DdmVariable.FreezeType = Sim.FREEZE_TYPE.LongFreeze;
+                            }
                         }
                         else if(nmlPlayGame > 255 && ((bnsCode == AutoMakeCode.Enum.BnsCode.SBIG) && (frtCode == AutoMakeCode.Enum.FrtCode.Hazure)) && hitBnsGameFlg == true)
                         {
