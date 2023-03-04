@@ -21,7 +21,7 @@ public class SubSub : MonoBehaviour
     private Logo winLamp;
 
     // スコアボード
-    private AtsumaruScoreboard scoreboard = new AtsumaruScoreboard();
+    // private AtsumaruScoreboard scoreboard = new AtsumaruScoreboard();
 
     // Start is called before the first frame update
     void Start()
@@ -66,7 +66,7 @@ public class SubSub : MonoBehaviour
                 if (Sim.DdmVariable.TotalNmlGames > 100 && (System.DateTime.Now.CompareTo(Ranking.endTime) ==  1))
                 {
                     long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
-                    scoreboard.SendScore(4, score, false);
+                    // scoreboard.SendScore(4, score, false);
                     SubMain.dispSetteiFlg = true;
                 }
             }

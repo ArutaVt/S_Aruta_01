@@ -8,7 +8,7 @@ public class Ranking : MonoBehaviour
     public UnityEngine.UI.Button dispbutton;
     public UnityEngine.UI.Button dispsetteibutton;
     public UnityEngine.UI.Dropdown dropdown;
-    private AtsumaruScoreboard scoreboard = new AtsumaruScoreboard();
+    // private AtsumaruScoreboard scoreboard = new AtsumaruScoreboard();
 
     // 配信開始時間
     public static DateTime startTime = new DateTime(2022, 6, 11, 12, 0, 0);
@@ -53,20 +53,20 @@ public class Ranking : MonoBehaviour
     /// </summary>
     public void DispButtonClick()
     {
-        switch (Mn.mnMode)
-        {
-            case Mn.MnMode.Normal:
-                scoreboard.ShowScoreboard(1);
-                break;
-            case Mn.MnMode.Score:
-                scoreboard.ShowScoreboard(2);
-                break;
-            case Mn.MnMode.Tricks:
-                scoreboard.ShowScoreboard(3);
-                break;
-            default:
-                break;
-        }
+        //switch (Mn.mnMode)
+        //{
+        //    case Mn.MnMode.Normal:
+        //        scoreboard.ShowScoreboard(1);
+        //        break;
+        //    case Mn.MnMode.Score:
+        //        scoreboard.ShowScoreboard(2);
+        //        break;
+        //    case Mn.MnMode.Tricks:
+        //        scoreboard.ShowScoreboard(3);
+        //        break;
+        //    default:
+        //        break;
+        //}
     }
 
     public void DispSetteiButtonClick()

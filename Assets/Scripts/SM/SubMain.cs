@@ -32,7 +32,7 @@ class SubMain
     private int naibuCnt = 0;
     private GameObject scoreBoard;
     private int ACount = 0;
-    private AtsumaruScoreboard scoreboard = new AtsumaruScoreboard();
+    // private AtsumaruScoreboard scoreboard = new AtsumaruScoreboard();
     private Ranking ranking;
     public static bool dispSetteiFlg = false;
 
@@ -910,36 +910,36 @@ class SubMain
             }
         }
 
-        // ランキング登録処理
-        if(dispSetteiFlg == false)
-        {
-            switch (Mn.mnMode)
-            {
-                case Mn.MnMode.Normal:
-                    if(Sim.DdmVariable.TotalNmlGames == 1000)
-                    {
-                        long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
-                        scoreboard.SendScore(1, score, true);
-                    }
-                    break;
-                case Mn.MnMode.Score:
-                    if (Sim.DdmVariable.TotalNmlGames == 100)
-                    {
-                        long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
-                        scoreboard.SendScore(2, score, true);
-                    }
-                    break;
-                case Mn.MnMode.Tricks:
-                    if (Sim.DdmVariable.TotalNmlGames == 1000)
-                    {
-                        long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
-                        scoreboard.SendScore(3, score, true);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
+        //// ランキング登録処理
+        //if(dispSetteiFlg == false)
+        //{
+        //    switch (Mn.mnMode)
+        //    {
+        //        case Mn.MnMode.Normal:
+        //            if(Sim.DdmVariable.TotalNmlGames == 1000)
+        //            {
+        //                long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
+        //                scoreboard.SendScore(1, score, true);
+        //            }
+        //            break;
+        //        case Mn.MnMode.Score:
+        //            if (Sim.DdmVariable.TotalNmlGames == 100)
+        //            {
+        //                long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
+        //                scoreboard.SendScore(2, score, true);
+        //            }
+        //            break;
+        //        case Mn.MnMode.Tricks:
+        //            if (Sim.DdmVariable.TotalNmlGames == 1000)
+        //            {
+        //                long score = (long)Sim.DdmVariable.Out - (long)Sim.DdmVariable.In;
+        //                scoreboard.SendScore(3, score, true);
+        //            }
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //}
     }
 
     /// <summary>
@@ -1091,7 +1091,7 @@ class SubMain
         // LIVE同時押しで配信ランキングを表示
         if (Input.GetKey(KeyCode.L) && Input.GetKey(KeyCode.I) && Input.GetKey(KeyCode.V) && Input.GetKey(KeyCode.E))
         {
-            scoreboard.ShowScoreboard(4);
+            // scoreboard.ShowScoreboard(4);
         }
 
         if (Input.GetKey(KeyCode.D))
